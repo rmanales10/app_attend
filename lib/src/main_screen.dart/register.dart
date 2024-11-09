@@ -1,3 +1,4 @@
+import 'package:app_attend/src/api_services/auth_service.dart';
 import 'package:app_attend/src/widgets/color_constant.dart';
 import 'package:app_attend/src/widgets/reusable_function.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,22 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   RxBool isObscured = true.obs;
+  final TextEditingController fullnameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  final AuthService _authService = Get.put(AuthService());
+
+  void _registerUser() {
+    _authService.registerUser(
+      fullnameController.text,
+      emailController.text,
+      passwordController.text,
+      phoneController.text,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,29 +59,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     children: [
                       formLabel('Fullname'),
                       const SizedBox(height: 8.0),
-                      myTextField('Enter fullname', Icons.person),
+                      myTextField(
+                        'Enter fullname',
+                        Icons.person,
+                        fullnameController,
+                      ),
                       const SizedBox(height: 20.0),
                       formLabel('Email'),
                       const SizedBox(height: 8.0),
-                      myTextField('Enter your email address', Icons.email),
+                      myTextField(
+                        'Enter your email address',
+                        Icons.email,
+                        emailController,
+                      ),
                       const SizedBox(height: 20.0),
                       formLabel('Phone Number'),
                       const SizedBox(height: 8.0),
-                      myTextField('Enter phone number', Icons.phone),
+                      myTextField(
+                        'Enter phone number',
+                        Icons.phone,
+                        phoneController,
+                      ),
                       const SizedBox(height: 20.0),
                       formLabel('Password'),
                       const SizedBox(height: 8.0),
                       Obx(
                         () => myPasswordField(
                           'Insert password',
-                          Icons
-                              .visibility, // Pass an icon to match the function parameter
-                          isObscured
-                              .value, // Use the observable's current value for `obs`
+                          Icons.visibility,
+                          isObscured.value,
                           () {
-                            // Toggle the observable value
                             isObscured.value = !isObscured.value;
                           },
+                          passwordController,
                         ),
                       ),
                       SizedBox(height: 10),
@@ -79,10 +106,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Container(
                         padding: EdgeInsets.symmetric(vertical: 10.0),
                         alignment: Alignment.center,
-                        child: labelTap(context, 'Already have an account? ',
-                            'Log in', () => Get.toNamed('/login')),
+                        child: labelTap(
+                          context,
+                          'Already have an account? ',
+                          'Log in',
+                          () => Get.toNamed('/login'),
+                        ),
                       ),
-                      myButton('Continue', blue, () {})
+                      myButton('Continue', blue,
+                          _registerUser) // Call _registerUser on button press
                     ],
                   ),
                 ),

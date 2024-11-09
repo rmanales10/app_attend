@@ -1,5 +1,8 @@
+import 'package:app_attend/src/api_services/auth_service.dart';
+import 'package:app_attend/src/api_services/firestore_service.dart';
 import 'package:app_attend/src/widgets/color_constant.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,6 +12,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final FirestoreService firestoreService = Get.put(FirestoreService());
+  final AuthService _authService = Get.put(AuthService());
+
   String selectedValue = "Option 1";
   List<String> items = [
     "Option 1",
@@ -16,6 +22,14 @@ class _HomeScreenState extends State<HomeScreen> {
     "Option 3",
     "Option 4",
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Retrieve the user data
+    firestoreService.fetchUserData(_authService.currentUser!.uid);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,27 +44,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Row(
                     children: [
-                      CircleAvatar(
-                        backgroundColor: const Color.fromARGB(255, 4, 4, 3),
+                      const CircleAvatar(
+                        backgroundColor: Color.fromARGB(255, 4, 4, 3),
                         radius: 30,
                         backgroundImage: NetworkImage(
                             'https://static1.srcdn.com/wordpress/wp-content/uploads/2024/10/untitled-design-2024-10-01t123706-515-1.jpg'),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
-                      RichText(
+                      Obx(() {
+                        String displayName =
+                            firestoreService.userData['fullname'] ??
+                                'Instructor';
+                        return RichText(
                           text: TextSpan(
-                        text: 'Beshy Ko\n',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                        children: [
-                          TextSpan(
-                            text: 'Instructor',
-                            style: TextStyle(fontSize: 14),
+                            text: '$displayName\n',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                            children: [
+                              TextSpan(
+                                text: 'Instructor',
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ],
                           ),
-                        ],
-                      ))
+                        );
+                      }),
                     ],
                   ),
                 ],

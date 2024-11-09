@@ -28,8 +28,10 @@ ElevatedButton myButton(String label, Color color, VoidCallback onPressed) {
   );
 }
 
-TextField myTextField(String label, IconData icon) {
+TextField myTextField(
+    String label, IconData icon, TextEditingController controller) {
   return TextField(
+    controller: controller,
     decoration: InputDecoration(
       hintText: label,
       prefixIcon: Icon(icon),
@@ -56,9 +58,10 @@ Text formLabel(String label) {
   );
 }
 
-TextField myPasswordField(
-    String label, IconData icon, bool obs, VoidCallback onPressed) {
+TextField myPasswordField(String label, IconData icon, bool obs,
+    VoidCallback onPressed, TextEditingController controller) {
   return TextField(
+    controller: controller,
     obscureText: obs,
     decoration: InputDecoration(
       hintText: label,

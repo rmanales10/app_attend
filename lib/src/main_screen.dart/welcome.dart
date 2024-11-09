@@ -30,21 +30,25 @@ class WelcomeScreen extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 150),
-                  Container(
-                    width: 120.0,
-                    height: 120.0,
-                    color: Colors.grey[300],
-                    child: Center(
-                      child: Text(
-                        'LOGO',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          color: Colors.black54,
-                        ),
-                      ),
-                    ),
-                  ),
+                  SizedBox(height: 100),
+                  // Container(
+                  //   width: 120.0,
+                  //   height: 120.0,
+                  //   color: Colors.grey[300],
+                  //   child: Center(
+                  //     child: Text(
+                  //       'LOGO',
+                  //       style: TextStyle(
+                  //         fontSize: 18.0,
+                  //         color: Colors.black54,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  Image(
+                    image: AssetImage('assets/logo.png'),
+                    width: 250,
+                  )
                 ],
               ),
             ),
