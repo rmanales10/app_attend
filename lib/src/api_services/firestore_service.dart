@@ -146,7 +146,6 @@ class FirestoreService extends GetxController {
           'timestamp': (doc['timestamp'] as Timestamp).toDate(),
         };
       }).toList();
-
       attendanceRecords.value = records;
     } catch (e) {
       log('Error retrieving attendance: $e');
@@ -192,7 +191,6 @@ class FirestoreService extends GetxController {
   Future<void> deleteAttendanceRecord({
     required String userId,
     required String attendanceId,
-    required String recordId,
   }) async {
     try {
       await _firestore
@@ -200,8 +198,6 @@ class FirestoreService extends GetxController {
           .doc(userId)
           .collection('attendance')
           .doc(attendanceId)
-          .collection('record')
-          .doc(recordId)
           .delete();
 
       Get.snackbar('Success', 'Attendance record deleted!',
@@ -213,5 +209,9 @@ class FirestoreService extends GetxController {
     }
   }
 
-  void storeAttendance({required String userId, required DateTime date, required String section, required String subject}) {}
+  void storeAttendance(
+      {required String userId,
+      required DateTime date,
+      required String section,
+      required String subject}) {}
 }

@@ -72,6 +72,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 if (_firestoreService.attendanceRecords.isEmpty) {
                   return Center(child: Text('No attendance records found'));
                 }
+
                 return ListView.builder(
                   itemCount: _firestoreService.attendanceRecords.length,
                   itemBuilder: (context, index) {
@@ -90,12 +91,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                             'Are you sure you want to delete this attendance?'),
                         actions: [
                           ElevatedButton(
-                              onPressed: () {
-                                _firestoreService.deleteAttendanceRecord(
-                                    userId: _authService.currentUser!.uid,
-                                    attendanceId: record['id'],
-                                    recordId: ''); // Fixed variable name
+                              onPressed: () async {
+                                fetchAttendanceRecords();
                                 Get.back();
+                                _firestoreService.deleteAttendanceRecord(
+                                  userId: _authService.currentUser!.uid,
+                                  attendanceId: record['id'],
+                                );
                               },
                               child: Text('Yes')),
                           ElevatedButton(

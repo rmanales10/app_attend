@@ -1,6 +1,5 @@
 import 'package:app_attend/src/api_services/auth_service.dart';
 import 'package:app_attend/src/api_services/firestore_service.dart';
-import 'package:app_attend/src/widgets/color_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -16,11 +15,11 @@ class _CreateAttendanceState extends State<CreateAttendance> {
   final AuthService _authService = Get.put(AuthService());
   final FirestoreService _firestore = Get.put(FirestoreService());
 
-  DateTime? selectedDate;
-  final DateFormat dateFormat = DateFormat('MM/dd/yyyy');
+  final selectedDate = Rxn<DateTime>();
+  final dateFormat = DateFormat('MM/dd/yyyy');
 
-  // Drop-down variables
-  String selectedSection = 'BSIT - 3A';
+  // Drop-down reactive variables
+  final selectedSection = 'BSIT - 3A'.obs;
   final List<String> sections = [
     'BSIT - 3A',
     'BSIT - 3B',
@@ -29,7 +28,8 @@ class _CreateAttendanceState extends State<CreateAttendance> {
     'BSIT - 3E',
     'BSIT - 3F',
   ];
-  String selectedSubject = 'Information Assurance Security';
+
+  final selectedSubject = 'Information Assurance Security'.obs;
   final List<String> subjects = [
     'Information Assurance Security',
     'Networking 2',
@@ -39,8 +39,8 @@ class _CreateAttendanceState extends State<CreateAttendance> {
     'Technopreneurship',
   ];
 
-  List<Map<String, dynamic>>? attendanceRecords;
-  bool isLoading = true;
+  RxList<Map<String, dynamic>> attendanceRecords = <Map<String, dynamic>>[].obs;
+  final isLoading = true.obs;
 
   @override
   void initState() {
@@ -50,33 +50,58 @@ class _CreateAttendanceState extends State<CreateAttendance> {
 
   Future<void> fetchAttendanceRecords() async {
     try {
+      isLoading.value = true;
       if (_authService.currentUser != null) {
         await _firestore.retrieveAttendance(
             userId: _authService.currentUser!.uid);
-        setState(() {
-          attendanceRecords = _firestore.attendanceRecords;
-        });
+        attendanceRecords.assignAll(_firestore.attendanceRecords);
       }
     } catch (e) {
       print('Error fetching attendance records: $e');
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      isLoading.value = false;
     }
   }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate ?? DateTime.now(),
+      initialDate: selectedDate.value ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-      });
+    if (picked != null) {
+      selectedDate.value = picked;
+    }
+  }
+
+  Future<void> createAttendanceRecord() async {
+    if (selectedDate.value == null) {
+      Get.snackbar('Error', 'Please select a date!',
+          snackPosition: SnackPosition.TOP);
+      return;
+    }
+    try {
+      final String userId = _authService.currentUser?.uid ?? '';
+      if (userId.isEmpty) {
+        throw Exception('User ID is required');
+      }
+
+      // Get or create the attendance ID
+      final attendanceId = await _firestore.getOrCreateAttendanceId(
+        userId: userId,
+        date: selectedDate.value!,
+        section: selectedSection.value,
+        subject: selectedSubject.value,
+      );
+
+      // Refresh the attendance records after creation
+      await fetchAttendanceRecords();
+      Get.back(); // Navigate back
+    } catch (e) {
+      print('Error creating attendance record: $e');
+      Get.snackbar('Error', 'Failed to create attendance record',
+          snackPosition: SnackPosition.TOP);
     }
   }
 
@@ -100,9 +125,7 @@ class _CreateAttendanceState extends State<CreateAttendance> {
                   selectedValue: selectedSection,
                   options: sections,
                   onChanged: (newValue) {
-                    setState(() {
-                      selectedSection = newValue!;
-                    });
+                    selectedSection.value = newValue!;
                   },
                 ),
                 Column(
@@ -121,12 +144,12 @@ class _CreateAttendanceState extends State<CreateAttendance> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              selectedDate != null
-                                  ? dateFormat.format(selectedDate!)
-                                  : 'MM/DD/YYYY',
-                              style: const TextStyle(fontSize: 16),
-                            ),
+                            Obx(() => Text(
+                                  selectedDate.value != null
+                                      ? dateFormat.format(selectedDate.value!)
+                                      : 'MM/DD/YYYY',
+                                  style: const TextStyle(fontSize: 16),
+                                )),
                             const SizedBox(width: 8),
                             const Icon(Icons.calendar_today, size: 20),
                           ],
@@ -146,13 +169,11 @@ class _CreateAttendanceState extends State<CreateAttendance> {
                   selectedValue: selectedSubject,
                   options: subjects,
                   onChanged: (newValue) {
-                    setState(() {
-                      selectedSubject = newValue!;
-                    });
+                    selectedSubject.value = newValue!;
                   },
                 ),
                 const SizedBox(height: 20),
-                attendanceDisplay(),
+                Obx(() => attendanceDisplay()),
                 const SizedBox(height: 20),
                 addAttendanceButton(),
               ],
@@ -165,7 +186,7 @@ class _CreateAttendanceState extends State<CreateAttendance> {
 
   Widget _buildDropdownSection({
     required String label,
-    required String selectedValue,
+    required RxString selectedValue,
     required List<String> options,
     required ValueChanged<String?> onChanged,
   }) {
@@ -182,23 +203,25 @@ class _CreateAttendanceState extends State<CreateAttendance> {
               border: Border.all(color: Colors.black),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: selectedValue,
-                icon: const Icon(Icons.arrow_drop_down),
-                isExpanded: true,
-                style: const TextStyle(fontSize: 16, color: Colors.black),
-                dropdownColor: Colors.grey[300],
-                items: options.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Text(value),
-                    ),
-                  );
-                }).toList(),
-                onChanged: onChanged,
+            child: Obx(
+              () => DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: selectedValue.value,
+                  icon: const Icon(Icons.arrow_drop_down),
+                  isExpanded: true,
+                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                  dropdownColor: Colors.grey[300],
+                  items: options.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Text(value),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: onChanged,
+                ),
               ),
             ),
           ),
@@ -208,12 +231,12 @@ class _CreateAttendanceState extends State<CreateAttendance> {
   }
 
   Widget attendanceDisplay() {
-    if (isLoading) {
+    if (isLoading.value) {
       return CircularProgressIndicator();
-    } else if (attendanceRecords == null || attendanceRecords!.isEmpty) {
+    } else if (attendanceRecords.isEmpty) {
       return Text('No attendance records found');
     } else {
-      final attendanceRecord = attendanceRecords!.first;
+      final attendanceRecord = attendanceRecords.first;
       return Text('Last subject: ${attendanceRecord['subject']}');
     }
   }
@@ -226,20 +249,7 @@ class _CreateAttendanceState extends State<CreateAttendance> {
         border: Border.all(color: Colors.black, width: 1),
       ),
       child: TextButton(
-        onPressed: () {
-          if (selectedDate != null) {
-            _firestore.storeAttendance(
-              userId: _authService.currentUser?.uid ?? '',
-              date: selectedDate!,
-              section: selectedSection,
-              subject: selectedSubject,
-            );
-            Get.back();
-          } else {
-            Get.snackbar('Error', 'Please select a date!',
-                snackPosition: SnackPosition.TOP);
-          }
-        },
+        onPressed: createAttendanceRecord,
         child: const Row(
           children: [
             Icon(Icons.add_circle_outline),

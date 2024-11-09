@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 class StudentList extends StatefulWidget {
   final String subject;
   final String section;
-  StudentList({super.key, required this.subject, required this.section});
+  const StudentList({super.key, required this.subject, required this.section});
 
   @override
   State<StudentList> createState() => _StudentListState();
@@ -18,7 +18,7 @@ class _StudentListState extends State<StudentList> {
   final AuthService _authService = Get.put(AuthService());
 
   // Map to store each student's attendance status
-  Map<String, bool> attendanceStatus = {};
+  RxMap<String, bool> attendanceStatus = <String, bool>{}.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -67,11 +67,8 @@ class _StudentListState extends State<StudentList> {
                     DataCell(Text(student['fullname'] ?? '')),
                     DataCell(Checkbox(
                       value: attendanceStatus[student['id']],
-                      onChanged: (value) {
-                        setState(() {
-                          attendanceStatus[student['id']] = value ?? false;
-                        });
-                      },
+                      onChanged: (value) =>
+                          attendanceStatus[student['id']] = value ?? false,
                     )),
                   ]);
                 }).toList(),
