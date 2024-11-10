@@ -8,11 +8,12 @@ class StudentList extends StatefulWidget {
   final String subject;
   final String section;
   final DateTime dateTime;
-  const StudentList(
-      {super.key,
-      required this.subject,
-      required this.section,
-      required this.dateTime});
+  const StudentList({
+    super.key,
+    required this.subject,
+    required this.section,
+    required this.dateTime,
+  });
 
   @override
   State<StudentList> createState() => _StudentListState();
@@ -24,6 +25,42 @@ class _StudentListState extends State<StudentList> {
 
   // Map to store each student's attendance status
   RxMap<String, bool> attendanceStatus = <String, bool>{}.obs;
+  String? attendanceId;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeAttendanceStatus();
+  }
+
+  Future<void> _initializeAttendanceStatus() async {
+    var user = _authService.currentUser;
+    if (user == null) {
+      Get.snackbar('Error', 'User not authenticated!',
+          snackPosition: SnackPosition.TOP);
+      return;
+    }
+
+    // Retrieve or create the attendanceId for the specific date, section, and subject
+    attendanceId = await _firestoreService.getOrCreateAttendanceId(
+      userId: user.uid,
+      date: widget.dateTime,
+      section: widget.section,
+      subject: widget.subject,
+    );
+
+    // Fetch the student attendance status for this attendance record
+    await _firestoreService.getStudentAttendanceStatus(
+      userId: user.uid,
+      attendanceId: attendanceId!,
+    );
+
+    // Populate the attendanceStatus map based on the fetched records
+    for (var record in _firestoreService.studentAttendanceRecords) {
+      attendanceStatus[record['id']] = !(record['isAbsent']
+          as bool); // If `isAbsent` is true, checkbox should be false
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +83,7 @@ class _StudentListState extends State<StudentList> {
             ],
           ),
           SizedBox(height: 16),
-          SingleChildScrollView(
+          Expanded(
             child: Obx(() {
               final sortedStudents = _firestoreService.studentData
                   .where((student) => student['section'] == widget.section)
@@ -72,8 +109,9 @@ class _StudentListState extends State<StudentList> {
                     DataCell(Text(student['fullname'] ?? '')),
                     DataCell(Checkbox(
                       value: attendanceStatus[student['id']],
-                      onChanged: (value) =>
-                          attendanceStatus[student['id']] = value ?? false,
+                      onChanged: (value) {
+                        attendanceStatus[student['id']] = value ?? false;
+                      },
                     )),
                   ]);
                 }).toList(),
@@ -154,14 +192,6 @@ class _StudentListState extends State<StudentList> {
       return;
     }
 
-    DateTime attendanceDate = widget.dateTime;
-    final attendanceId = await _firestoreService.getOrCreateAttendanceId(
-      userId: user.uid,
-      date: attendanceDate,
-      section: widget.section,
-      subject: widget.subject,
-    );
-
     final studentsInSection = _firestoreService.studentData
         .where((student) => student['section'] == widget.section)
         .toList();
@@ -169,14 +199,15 @@ class _StudentListState extends State<StudentList> {
     for (var student in studentsInSection) {
       await _firestoreService.storeAttendanceRecord(
         userId: user.uid,
-        attendanceId: attendanceId,
+        attendanceId: attendanceId!,
         recordId: student['id'],
         fullname: student['fullname'],
         idnumber: student['idnumber'],
         section: widget.section,
         subject: widget.subject,
-        date: attendanceDate,
-        isAbsent: attendanceStatus[student['id']] ?? false,
+        date: widget.dateTime,
+        isAbsent:
+            attendanceStatus[student['id']] ?? false, // True if not checked
       );
     }
   }

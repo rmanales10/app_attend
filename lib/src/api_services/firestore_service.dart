@@ -5,19 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirestoreService extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Reactive list to hold attendance records
   var attendanceRecords = <Map<String, dynamic>>[].obs;
 
-  // Reactive map to hold user data
   var userData = {}.obs;
 
-  // Reactive list to hold student data
   var studentData = <Map<String, dynamic>>[].obs;
 
-  // Reactive list to hold student attendance records
   var studentAttendanceRecords = <Map<String, dynamic>>[].obs;
 
-  // Method to fetch user data
   Future<void> fetchUserData(String documentId) async {
     try {
       DocumentSnapshot documentSnapshot =
@@ -207,5 +202,92 @@ class FirestoreService extends GetxController {
           snackPosition: SnackPosition.TOP);
       log("Error deleting attendance record: $e");
     }
+  }
+
+  Future<void> getStudentAttendanceStatus({
+    required String userId,
+    required String attendanceId,
+  }) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('attendance')
+          .doc(attendanceId)
+          .collection('record')
+          .get();
+
+      for (var doc in querySnapshot.docs) {
+        studentAttendanceRecords.add({
+          'id': doc.id,
+          'isAbsent': doc['isAbsent'] ?? true,
+        });
+      }
+    } catch (e) {
+      log('Error fetching student attendance status: $e');
+    }
+  }
+
+  Future<Map<String, int>> getAttendanceCounts({
+    required String userId,
+    required String attendanceId,
+  }) async {
+    RxInt presentCount = 0.obs;
+    RxInt absentCount = 0.obs;
+    RxInt total = 0.obs;
+
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('attendance')
+          .doc(attendanceId)
+          .collection('record')
+          .get();
+
+      for (var doc in querySnapshot.docs) {
+        bool isAbsent = doc['isAbsent'] ?? true; // Default to absent if not set
+        total.value++;
+        if (isAbsent) {
+          absentCount.value++;
+        } else {
+          presentCount.value++;
+        }
+      }
+    } catch (e) {
+      log('Error fetching attendance counts: $e');
+    }
+
+    return {
+      'presentCount': presentCount.value,
+      'total': total.value,
+      'absentCount': absentCount.value
+    };
+  }
+
+  var sections = <String>[].obs;
+  var subjects = <String>[].obs;
+
+  Future<void> fetchSectionsAndSubjects({required String userId}) async {
+    QuerySnapshot querySnapshotSection = await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('attendance')
+        .get();
+    sections.value = querySnapshotSection.docs
+        .map((doc) => doc['section'] as String)
+        .toSet()
+        .toList();
+
+    QuerySnapshot querySnapshotSubject = await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('attendance')
+        .get();
+
+    subjects.value = querySnapshotSubject.docs
+        .map((doc) => doc['subject'] as String)
+        .toSet()
+        .toList();
   }
 }

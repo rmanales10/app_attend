@@ -19,16 +19,20 @@ class HomeFinal extends StatelessWidget {
     final authService = Get.put(AuthService());
     final firestoreService = Get.put(FirestoreService());
 
-    // Fetch the current user's data
     firestoreService.fetchUserData(authService.currentUser!.uid);
+    firestoreService.fetchSectionsAndSubjects(
+        userId: authService.currentUser!.uid);
 
-    // Initialize dropdown and date values
-    var selectedValue = "Option 1".obs;
-    List<String> items = ["Option 1", "Option 2", "Option 3", "Option 4"];
+    final sections = firestoreService.sections;
+    final selectedSection = sections[0].obs;
+
+    final subjects = firestoreService.subjects;
+    final selectedSubject = subjects[0].obs;
+
     Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
     final DateFormat dateFormat = DateFormat('MM/dd/yyyy');
 
-    Future<void> _selectDate(BuildContext context) async {
+    Future<void> selectDate(BuildContext context) async {
       final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate.value ?? DateTime.now(),
@@ -74,11 +78,14 @@ class HomeFinal extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  selectList(selectedValue, items),
+                  selectList(selectedSection, sections),
                   selectDateWidget(
-                      _selectDate, context, selectedDate, dateFormat),
+                      selectDate, context, selectedDate, dateFormat),
                 ],
               ),
+              SizedBox(height: 20),
+              SizedBox(
+                  width: 300, child: selectList(selectedSubject, subjects)),
               const SizedBox(height: 20),
               const InOutStatusWidget(
                 inCount: 18,

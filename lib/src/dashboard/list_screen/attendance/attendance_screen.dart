@@ -97,7 +97,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                 Get.back();
                                 _firestoreService.deleteAttendanceRecord(
                                   userId: _authService.currentUser!.uid,
-                                  attendanceId: record['id'],
+                                  attendanceId  : record['id'],
                                 );
                               },
                               child: Text('Yes')),
