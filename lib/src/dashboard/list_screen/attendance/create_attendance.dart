@@ -120,13 +120,17 @@ class _CreateAttendanceState extends State<CreateAttendance> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildDropdownSection(
-                  label: 'Select Section:',
-                  selectedValue: selectedSection,
-                  options: sections,
-                  onChanged: (newValue) {
-                    selectedSection.value = newValue!;
-                  },
+                SizedBox(
+                  width: 150,
+                  height: 40,
+                  child: _buildDropdownSection(
+                    label: 'Select Section:',
+                    selectedValue: selectedSection,
+                    options: sections,
+                    onChanged: (newValue) {
+                      selectedSection.value = newValue!;
+                    },
+                  ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,13 +168,17 @@ class _CreateAttendanceState extends State<CreateAttendance> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildDropdownSection(
-                  label: 'Select Subject:',
-                  selectedValue: selectedSubject,
-                  options: subjects,
-                  onChanged: (newValue) {
-                    selectedSubject.value = newValue!;
-                  },
+                SizedBox(
+                  width: 150,
+                  height: 40,
+                  child: _buildDropdownSection(
+                    label: 'Select Subject:',
+                    selectedValue: selectedSubject,
+                    options: subjects,
+                    onChanged: (newValue) {
+                      selectedSubject.value = newValue!;
+                    },
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Obx(() => attendanceDisplay()),
@@ -194,34 +202,27 @@ class _CreateAttendanceState extends State<CreateAttendance> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label),
-        SizedBox(
-          height: 40,
-          width: 150,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Obx(
-              () => DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: selectedValue.value,
-                  icon: const Icon(Icons.arrow_drop_down),
-                  isExpanded: true,
-                  style: const TextStyle(fontSize: 16, color: Colors.black),
-                  dropdownColor: Colors.grey[300],
-                  items: options.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(value),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: onChanged,
-                ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.black),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Obx(
+            () => DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: selectedValue.value,
+                icon: const Icon(Icons.arrow_drop_down),
+                isExpanded: true,
+                style: const TextStyle(fontSize: 16, color: Colors.black),
+                dropdownColor: Colors.grey[300],
+                items: options.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: onChanged,
               ),
             ),
           ),

@@ -84,7 +84,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       label,
                       () => Get.to(() => StudentList(
                           subject: record['subject'],
-                          section: record['section'])),
+                          section: record['section'],
+                          dateTime: record['date'])),
                       () => Get.dialog(AlertDialog(
                         title: Text('Confirmation'),
                         content: Text(

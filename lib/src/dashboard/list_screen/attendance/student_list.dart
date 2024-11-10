@@ -7,7 +7,12 @@ import 'package:get/get.dart';
 class StudentList extends StatefulWidget {
   final String subject;
   final String section;
-  const StudentList({super.key, required this.subject, required this.section});
+  final DateTime dateTime;
+  const StudentList(
+      {super.key,
+      required this.subject,
+      required this.section,
+      required this.dateTime});
 
   @override
   State<StudentList> createState() => _StudentListState();
@@ -79,8 +84,8 @@ class _StudentListState extends State<StudentList> {
           Align(
             alignment: Alignment.center,
             child: ElevatedButton(
-              onPressed: () async {
-                await _saveAttendanceForStudents();
+              onPressed: () {
+                _saveAttendanceForStudents();
                 Get.back();
                 Get.snackbar(
                   'Success',
@@ -149,7 +154,7 @@ class _StudentListState extends State<StudentList> {
       return;
     }
 
-    DateTime attendanceDate = DateTime.now();
+    DateTime attendanceDate = widget.dateTime;
     final attendanceId = await _firestoreService.getOrCreateAttendanceId(
       userId: user.uid,
       date: attendanceDate,
