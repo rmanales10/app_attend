@@ -26,6 +26,7 @@ class TimeController extends GetxController {
     timeOfDay.value = _getTimeOfDay(now.hour);
   }
 
+//lage
   String _getTimeOfDay(int hour) {
     if (hour >= 5 && hour < 12) {
       return 'Morning';
