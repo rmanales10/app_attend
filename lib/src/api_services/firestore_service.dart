@@ -208,10 +208,4 @@ class FirestoreService extends GetxController {
       log("Error deleting attendance record: $e");
     }
   }
-
-  void storeAttendance(
-      {required String userId,
-      required DateTime date,
-      required String section,
-      required String subject}) {}
 }

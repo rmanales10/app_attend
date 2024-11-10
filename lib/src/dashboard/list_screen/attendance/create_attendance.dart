@@ -120,9 +120,7 @@ class _CreateAttendanceState extends State<CreateAttendance> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                SizedBox(
-                  width: 150,
-                  height: 40,
+                Flexible(
                   child: _buildDropdownSection(
                     label: 'Select Section:',
                     selectedValue: selectedSection,
@@ -132,35 +130,38 @@ class _CreateAttendanceState extends State<CreateAttendance> {
                     },
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Select Date:'),
-                    GestureDetector(
-                      onTap: () => _selectDate(context),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Obx(() => Text(
-                                  selectedDate.value != null
-                                      ? dateFormat.format(selectedDate.value!)
-                                      : 'MM/DD/YYYY',
-                                  style: const TextStyle(fontSize: 16),
-                                )),
-                            const SizedBox(width: 8),
-                            const Icon(Icons.calendar_today, size: 20),
-                          ],
+                SizedBox(width: 20), // Add spacing between widgets
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Select Date:'),
+                      GestureDetector(
+                        onTap: () => _selectDate(context),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Obx(() => Text(
+                                    selectedDate.value != null
+                                        ? dateFormat.format(selectedDate.value!)
+                                        : 'MM/DD/YYYY',
+                                    style: const TextStyle(fontSize: 16),
+                                  )),
+                              const SizedBox(width: 8),
+                              const Icon(Icons.calendar_today, size: 20),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -168,17 +169,13 @@ class _CreateAttendanceState extends State<CreateAttendance> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
-                  width: 150,
-                  height: 40,
-                  child: _buildDropdownSection(
-                    label: 'Select Subject:',
-                    selectedValue: selectedSubject,
-                    options: subjects,
-                    onChanged: (newValue) {
-                      selectedSubject.value = newValue!;
-                    },
-                  ),
+                _buildDropdownSection(
+                  label: 'Select Subject:',
+                  selectedValue: selectedSubject,
+                  options: subjects,
+                  onChanged: (newValue) {
+                    selectedSubject.value = newValue!;
+                  },
                 ),
                 const SizedBox(height: 20),
                 Obx(() => attendanceDisplay()),
