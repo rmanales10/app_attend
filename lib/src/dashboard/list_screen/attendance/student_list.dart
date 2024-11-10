@@ -207,7 +207,7 @@ class _StudentListState extends State<StudentList> {
         subject: widget.subject,
         date: widget.dateTime,
         isAbsent:
-            attendanceStatus[student['id']] ?? false, // True if not checked
+            !(attendanceStatus[student['id']] ?? false), // True if not checked
       );
     }
   }

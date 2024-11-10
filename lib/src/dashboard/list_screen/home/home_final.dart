@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:app_attend/src/api_services/auth_service.dart';
 import 'package:app_attend/src/api_services/firestore_service.dart';
 import 'package:app_attend/src/widgets/color_constant.dart';
@@ -10,24 +11,34 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-class HomeFinal extends StatelessWidget {
+class HomeFinal extends StatefulWidget {
   const HomeFinal({super.key});
 
+  @override
+  State<HomeFinal> createState() => _HomeFinalState();
+}
+
+class _HomeFinalState extends State<HomeFinal> {
   @override
   Widget build(BuildContext context) {
     final timeController = Get.put(TimeController());
     final authService = Get.put(AuthService());
     final firestoreService = Get.put(FirestoreService());
 
-    firestoreService.fetchUserData(authService.currentUser!.uid);
-    firestoreService.fetchSectionsAndSubjects(
-        userId: authService.currentUser!.uid);
+    // Fetching user data and sections/subjects if currentUser is not null
+    if (authService.currentUser != null) {
+      firestoreService.fetchUserData(authService.currentUser!.uid);
+      firestoreService.fetchSectionsAndSubjects(
+          userId: authService.currentUser!.uid);
+    }
 
     final sections = firestoreService.sections;
-    final selectedSection = sections[0].obs;
-
+    final selectedSection = sections.isNotEmpty ? sections[0].obs : "".obs;
     final subjects = firestoreService.subjects;
-    final selectedSubject = subjects[0].obs;
+    final selectedSubject = subjects.isNotEmpty ? subjects[0].obs : "".obs;
+    final absentCount = firestoreService.absentCount;
+    final presentCount = firestoreService.presentCount;
+    final totalCount = firestoreService.totalCount;
 
     Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
     final DateFormat dateFormat = DateFormat('MM/dd/yyyy');
@@ -41,6 +52,21 @@ class HomeFinal extends StatelessWidget {
       );
       if (picked != null) {
         selectedDate.value = picked;
+        await firestoreService.getAllAttendanceStatus(
+          userId: authService.currentUser!.uid,
+          date: selectedDate.value!,
+          section: selectedSection.value,
+          subject: selectedSubject.value,
+        );
+
+        if (firestoreService.attendanceId.value.isNotEmpty) {
+          await firestoreService.getAttendanceCounts(
+            userId: authService.currentUser!.uid,
+            attendanceId: firestoreService.attendanceId.value,
+          );
+        } else {
+          log("No attendance record found for the selected date.");
+        }
       }
     }
 
@@ -87,14 +113,15 @@ class HomeFinal extends StatelessWidget {
               SizedBox(
                   width: 300, child: selectList(selectedSubject, subjects)),
               const SizedBox(height: 20),
-              const InOutStatusWidget(
-                inCount: 18,
-                breakCount: 2,
-                outCount: 3,
-                dateTime: "Monday, 25 May 5:28 pm",
-                firstIn: "8:32 am",
-                lastOut: "--:--",
-              ),
+              Obx(() => InOutStatusWidget(
+                    inCount: presentCount.value,
+                    breakCount: totalCount.value,
+                    outCount: absentCount.value,
+                    dateTime: DateFormat('EEEE, d MMM yyyy h:mm a')
+                        .format(DateTime.now()),
+                    firstIn: "8:32 am",
+                    lastOut: "--:--",
+                  )),
               const SizedBox(height: 20),
               UpcomingRemindersWidget(
                 reminders: [

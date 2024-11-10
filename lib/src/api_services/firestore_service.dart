@@ -1,18 +1,24 @@
 import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class FirestoreService extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Observable collections and counts
   var attendanceRecords = <Map<String, dynamic>>[].obs;
-
   var userData = {}.obs;
-
   var studentData = <Map<String, dynamic>>[].obs;
-
   var studentAttendanceRecords = <Map<String, dynamic>>[].obs;
+  var attendanceId = "".obs;
+  RxInt presentCount = 0.obs;
+  RxInt absentCount = 0.obs;
+  RxInt totalCount = 0.obs;
+  var sections = <String>['Empty'].obs;
+  var subjects = <String>['Empty'].obs;
 
+  // Fetch user data
   Future<void> fetchUserData(String documentId) async {
     try {
       DocumentSnapshot documentSnapshot =
@@ -27,7 +33,7 @@ class FirestoreService extends GetxController {
     }
   }
 
-  // Method to fetch all students from Firestore
+  // Fetch all students
   Future<void> getAllStudent() async {
     try {
       QuerySnapshot querySnapshot =
@@ -46,7 +52,7 @@ class FirestoreService extends GetxController {
     }
   }
 
-  // Method to retrieve or create an attendance document ID
+  // Retrieve or create an attendance document ID
   Future<String> getOrCreateAttendanceId({
     required String userId,
     required DateTime date,
@@ -58,7 +64,7 @@ class FirestoreService extends GetxController {
           .collection('users')
           .doc(userId)
           .collection('attendance')
-          .where('date', isEqualTo: date)
+          .where('date', isEqualTo: Timestamp.fromDate(date))
           .where('subject', isEqualTo: subject)
           .where('section', isEqualTo: section)
           .get();
@@ -84,7 +90,7 @@ class FirestoreService extends GetxController {
     }
   }
 
-  // Method to store an attendance record in a specific attendance document's record subcollection
+  // Store an attendance record
   Future<void> storeAttendanceRecord({
     required String userId,
     required String attendanceId,
@@ -114,15 +120,18 @@ class FirestoreService extends GetxController {
         'timestamp': FieldValue.serverTimestamp(),
       });
 
-      Get.snackbar('Success', 'Attendance record saved successfully!',
-          snackPosition: SnackPosition.TOP);
+      Get.snackbar(
+        'Success',
+        'Attendance record saved successfully!',
+        snackPosition: SnackPosition.TOP,
+      );
     } catch (e) {
       Get.snackbar('Error', 'Something went wrong!',
           snackPosition: SnackPosition.TOP);
     }
   }
 
-  // Method to retrieve attendance records for a specific user
+  // Retrieve attendance records for a specific user
   Future<void> retrieveAttendance({required String userId}) async {
     try {
       QuerySnapshot querySnapshot = await _firestore
@@ -148,7 +157,7 @@ class FirestoreService extends GetxController {
     }
   }
 
-  // Method to retrieve records within a specific attendance document's record subcollection
+  // Retrieve records in a specific attendance document's record subcollection
   Future<void> retrieveAttendanceRecord({
     required String userId,
     required String attendanceId,
@@ -182,7 +191,7 @@ class FirestoreService extends GetxController {
     }
   }
 
-  // Method to delete an attendance record
+  // Delete an attendance record
   Future<void> deleteAttendanceRecord({
     required String userId,
     required String attendanceId,
@@ -196,14 +205,19 @@ class FirestoreService extends GetxController {
           .delete();
 
       Get.snackbar('Success', 'Attendance record deleted!',
-          snackPosition: SnackPosition.TOP);
+          snackPosition: SnackPosition.TOP,
+          duration: Duration(milliseconds: 1));
     } catch (e) {
-      Get.snackbar('Error', 'Failed to delete attendance record',
-          snackPosition: SnackPosition.TOP);
+      Get.snackbar(
+        'Error',
+        'Failed to delete attendance record',
+        snackPosition: SnackPosition.TOP,
+      );
       log("Error deleting attendance record: $e");
     }
   }
 
+  // Fetch attendance status for students within an attendance document
   Future<void> getStudentAttendanceStatus({
     required String userId,
     required String attendanceId,
@@ -228,14 +242,69 @@ class FirestoreService extends GetxController {
     }
   }
 
-  Future<Map<String, int>> getAttendanceCounts({
+  // Retrieve attendance ID based on date
+  Future<void> getAllAttendanceStatus({
+    required String userId,
+    required DateTime date,
+    required String section,
+    required String subject,
+  }) async {
+    // Define start and end of the day for querying
+    final startOfDay = DateTime(date.year, date.month, date.day);
+    final endOfDay = DateTime(date.year, date.month, date.day, 23, 59, 59);
+
+    try {
+      // Query the Firestore collection for the attendance records
+      final querySnapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('attendance')
+          .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+          .where('date', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
+          .where('section', isEqualTo: section)
+          .where('subject', isEqualTo: subject)
+          .get();
+
+      // Check if documents are returned and set the attendanceId value accordingly
+      if (querySnapshot.docs.isNotEmpty) {
+        attendanceId.value = querySnapshot.docs.first.id; // Use the first match
+      } else {
+        attendanceId.value = ""; // No match found, set to empty
+      }
+    } catch (e) {
+      // Log any errors and set attendanceId to an empty string in case of failure
+      log("Error retrieving attendance status: $e");
+      attendanceId.value = "";
+    }
+  }
+
+  // Fetch sections and subjects
+  Future<void> fetchSectionsAndSubjects({required String userId}) async {
+    try {
+      QuerySnapshot querySnapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('attendance')
+          .get();
+
+      sections.value = querySnapshot.docs
+          .map((doc) => doc['section'] as String)
+          .toSet()
+          .toList();
+      subjects.value = querySnapshot.docs
+          .map((doc) => doc['subject'] as String)
+          .toSet()
+          .toList();
+    } catch (e) {
+      log("Error fetching sections and subjects: $e");
+    }
+  }
+
+  // Get attendance counts
+  Future<void> getAttendanceCounts({
     required String userId,
     required String attendanceId,
   }) async {
-    RxInt presentCount = 0.obs;
-    RxInt absentCount = 0.obs;
-    RxInt total = 0.obs;
-
     try {
       QuerySnapshot querySnapshot = await _firestore
           .collection('users')
@@ -245,49 +314,22 @@ class FirestoreService extends GetxController {
           .collection('record')
           .get();
 
+      presentCount.value = 0;
+      absentCount.value = 0;
+      totalCount.value = querySnapshot.docs.length;
+
       for (var doc in querySnapshot.docs) {
-        bool isAbsent = doc['isAbsent'] ?? true; // Default to absent if not set
-        total.value++;
+        bool isAbsent = doc['isAbsent'] ?? true;
         if (isAbsent) {
           absentCount.value++;
         } else {
           presentCount.value++;
         }
       }
+
+      log("Attendance ID: $attendanceId, Present: ${presentCount.value}, Absent: ${absentCount.value}, Total: ${totalCount.value}");
     } catch (e) {
       log('Error fetching attendance counts: $e');
     }
-
-    return {
-      'presentCount': presentCount.value,
-      'total': total.value,
-      'absentCount': absentCount.value
-    };
-  }
-
-  var sections = <String>[].obs;
-  var subjects = <String>[].obs;
-
-  Future<void> fetchSectionsAndSubjects({required String userId}) async {
-    QuerySnapshot querySnapshotSection = await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('attendance')
-        .get();
-    sections.value = querySnapshotSection.docs
-        .map((doc) => doc['section'] as String)
-        .toSet()
-        .toList();
-
-    QuerySnapshot querySnapshotSubject = await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('attendance')
-        .get();
-
-    subjects.value = querySnapshotSubject.docs
-        .map((doc) => doc['subject'] as String)
-        .toSet()
-        .toList();
   }
 }

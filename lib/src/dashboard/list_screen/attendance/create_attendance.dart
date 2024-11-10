@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:app_attend/src/api_services/auth_service.dart';
 import 'package:app_attend/src/api_services/firestore_service.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +59,7 @@ class _CreateAttendanceState extends State<CreateAttendance> {
         attendanceRecords.assignAll(_firestore.attendanceRecords);
       }
     } catch (e) {
-      print('Error fetching attendance records: $e');
+      log('Error fetching attendance records: $e');
     } finally {
       isLoading.value = false;
     }
@@ -88,7 +90,7 @@ class _CreateAttendanceState extends State<CreateAttendance> {
       }
 
       // Get or create the attendance ID
-      final attendanceId = await _firestore.getOrCreateAttendanceId(
+      await _firestore.getOrCreateAttendanceId(
         userId: userId,
         date: selectedDate.value!,
         section: selectedSection.value,
@@ -97,9 +99,10 @@ class _CreateAttendanceState extends State<CreateAttendance> {
 
       // Refresh the attendance records after creation
       await fetchAttendanceRecords();
-      Get.back(); // Navigate back
+      Get.back();
+      // Navigate back
     } catch (e) {
-      print('Error creating attendance record: $e');
+      log('Error creating attendance record: $e');
       Get.snackbar('Error', 'Failed to create attendance record',
           snackPosition: SnackPosition.TOP);
     }
