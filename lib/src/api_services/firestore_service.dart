@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 
 class FirestoreService extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -120,11 +119,8 @@ class FirestoreService extends GetxController {
         'timestamp': FieldValue.serverTimestamp(),
       });
 
-      Get.snackbar(
-        'Success',
-        'Attendance record saved successfully!',
-        snackPosition: SnackPosition.TOP,
-      );
+      Get.snackbar('Success', 'Attendance record saved successfully!',
+          snackPosition: SnackPosition.TOP, duration: Duration(seconds: 1));
     } catch (e) {
       Get.snackbar('Error', 'Something went wrong!',
           snackPosition: SnackPosition.TOP);

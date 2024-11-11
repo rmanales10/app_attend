@@ -53,7 +53,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             SizedBox(height: 10),
             Align(
               alignment: Alignment.centerRight,
-              child: Container(
+              child: SizedBox(
                 width: 150,
                 child: ElevatedButton(
                   onPressed: () => Get.to(() => CreateAttendance()),

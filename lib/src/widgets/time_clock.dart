@@ -5,8 +5,7 @@ class TimeClockWidget extends StatelessWidget {
   final String time; // Pass the formatted time as a string, e.g., "05:32:28"
   final String role; // The role, e.g., "Bartending"
 
-  const TimeClockWidget({Key? key, required this.time, required this.role})
-      : super(key: key);
+  const TimeClockWidget({super.key, required this.time, required this.role});
 
   @override
   Widget build(BuildContext context) {

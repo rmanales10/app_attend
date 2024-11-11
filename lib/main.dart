@@ -27,6 +27,8 @@ void main() async {
 }
 
 class TapAttendApp extends StatelessWidget {
+  const TapAttendApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(

@@ -146,13 +146,13 @@ class _HomeFinalState extends State<HomeFinal> {
   }
 
   GestureDetector selectDateWidget(
-    Future<void> Function(BuildContext) _selectDate,
+    Future<void> Function(BuildContext) selectDate,
     BuildContext context,
     Rx<DateTime?> selectedDate,
     DateFormat dateFormat,
   ) {
     return GestureDetector(
-      onTap: () => _selectDate(context),
+      onTap: () => selectDate(context),
       child: Container(
         height: 50,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),

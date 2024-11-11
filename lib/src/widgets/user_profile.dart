@@ -6,11 +6,11 @@ class UserProfileWidget extends StatelessWidget {
   final String profileImageUrl;
 
   const UserProfileWidget({
-    Key? key,
+    super.key,
     required this.name,
     required this.email,
     required this.profileImageUrl,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

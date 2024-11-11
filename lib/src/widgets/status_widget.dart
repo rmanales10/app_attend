@@ -11,14 +11,14 @@ class InOutStatusWidget extends StatelessWidget {
   final String lastOut; // Time of the last out, e.g., "--:--"
 
   const InOutStatusWidget({
-    Key? key,
+    super.key,
     required this.inCount,
     required this.breakCount,
     required this.outCount,
     required this.dateTime,
     required this.firstIn,
     required this.lastOut,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

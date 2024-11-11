@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:app_attend/src/api_services/auth_service.dart';
 import 'package:app_attend/src/api_services/firestore_service.dart';
 import 'package:app_attend/src/widgets/color_constant.dart';
@@ -125,11 +127,6 @@ class _StudentListState extends State<StudentList> {
               onPressed: () {
                 _saveAttendanceForStudents();
                 Get.back();
-                Get.snackbar(
-                  'Success',
-                  'Attendance saved successfully',
-                  snackPosition: SnackPosition.TOP,
-                );
               },
               child: Text('Save'),
             ),
@@ -214,9 +211,9 @@ class _StudentListState extends State<StudentList> {
 
   void _onReportSelected(String value) {
     if (value == 'pdf') {
-      print('Exporting to PDF...');
+      log('Exporting to PDF...');
     } else if (value == 'csv') {
-      print('Exporting to CSV...');
+      log('Exporting to CSV...');
     }
   }
 }

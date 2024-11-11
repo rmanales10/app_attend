@@ -34,7 +34,7 @@ class _ReportScreenState extends State<ReportScreen> {
   Align searchBar() {
     return Align(
       alignment: Alignment.centerRight,
-      child: Container(
+      child: SizedBox(
         width: 180,
         height: 50,
         child: TextField(

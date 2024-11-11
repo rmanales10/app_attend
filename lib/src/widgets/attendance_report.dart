@@ -5,11 +5,11 @@ class AttendanceReportWidget extends StatelessWidget {
   final List<double> attendanceData;
   final double overallPercentage;
 
-  AttendanceReportWidget({
-    Key? key,
+  const AttendanceReportWidget({
+    super.key,
     required this.attendanceData,
     required this.overallPercentage,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

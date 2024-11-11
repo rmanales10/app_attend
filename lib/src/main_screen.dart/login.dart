@@ -5,7 +5,10 @@ import 'package:get/get.dart';
 import 'package:app_attend/src/api_services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _LoginScreenState createState() => _LoginScreenState();
 }
 

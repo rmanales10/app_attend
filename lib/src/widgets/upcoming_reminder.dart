@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 class UpcomingRemindersWidget extends StatelessWidget {
   final List<Reminder> reminders;
 
-  const UpcomingRemindersWidget({Key? key, required this.reminders})
-      : super(key: key);
+  const UpcomingRemindersWidget({super.key, required this.reminders});
 
   @override
   Widget build(BuildContext context) {
