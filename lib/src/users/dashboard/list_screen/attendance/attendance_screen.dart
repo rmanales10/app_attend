@@ -1,9 +1,10 @@
-import 'package:app_attend/src/api_services/auth_service.dart';
-import 'package:app_attend/src/api_services/firestore_service.dart';
-import 'package:app_attend/src/dashboard/list_screen/attendance/create_attendance.dart';
-import 'package:app_attend/src/dashboard/list_screen/attendance/student_list.dart';
-import 'package:app_attend/src/widgets/color_constant.dart';
-import 'package:app_attend/src/widgets/reusable_function.dart';
+import 'package:app_attend/src/users/api_services/auth_service.dart';
+import 'package:app_attend/src/users/api_services/firestore_service.dart';
+import 'package:app_attend/src/users/dashboard/list_screen/attendance/create_attendance.dart';
+
+import 'package:app_attend/src/users/dashboard/list_screen/attendance/student_list.dart';
+import 'package:app_attend/src/users/widgets/color_constant.dart';
+import 'package:app_attend/src/users/widgets/reusable_function.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -83,9 +84,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     return createCard(
                       label,
                       () => Get.to(() => StudentList(
-                          subject: record['subject'],
-                          section: record['section'],
-                          dateTime: record['date'])),
+                            subject: record['subject'],
+                            section: record['section'],
+                            dateTime: record['date'],
+                            time: record['time'],
+                          )),
                       () => Get.dialog(AlertDialog(
                         title: Text('Confirmation'),
                         content: Text(
@@ -97,7 +100,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                 Get.back();
                                 _firestoreService.deleteAttendanceRecord(
                                   userId: _authService.currentUser!.uid,
-                                  attendanceId  : record['id'],
+                                  attendanceId: record['id'],
                                 );
                               },
                               child: Text('Yes')),

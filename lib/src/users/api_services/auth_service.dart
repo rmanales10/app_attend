@@ -7,6 +7,8 @@ class AuthService extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   User? get currentUser => _auth.currentUser;
 
+  get email => null;
+
   // Register user with Firebase Auth and store in Firestore
   Future<void> registerUser(
       String fullname, String email, String password, String phone) async {
@@ -45,7 +47,8 @@ class AuthService extends GetxController {
           snackPosition: SnackPosition.TOP);
       Get.offAllNamed('/dashboard'); // Navigate to the dashboard page
     } catch (e) {
-      Get.snackbar('Error', e.toString(), snackPosition: SnackPosition.TOP);
+      Get.snackbar('Error', 'Incorrect Email or Password',
+          snackPosition: SnackPosition.TOP);
     }
   }
 
@@ -54,5 +57,16 @@ class AuthService extends GetxController {
     Get.snackbar('Success', 'User Logged out successfully!',
         snackPosition: SnackPosition.TOP);
     Get.offAllNamed('/welcome'); // Navigate to the dashboard page
+  }
+
+  Future<void> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      Get.snackbar('Success', 'Password reset email sent! Check your inbox.!',
+          snackPosition: SnackPosition.TOP);
+    } catch (e) {
+      Get.snackbar('Error', 'Please check your connection!',
+          snackPosition: SnackPosition.TOP);
+    }
   }
 }

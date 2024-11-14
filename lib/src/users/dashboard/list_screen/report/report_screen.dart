@@ -1,4 +1,4 @@
-import 'package:app_attend/src/widgets/color_constant.dart';
+import 'package:app_attend/src/users/widgets/color_constant.dart';
 import 'package:flutter/material.dart';
 
 class ReportScreen extends StatefulWidget {
@@ -22,9 +22,9 @@ class _ReportScreenState extends State<ReportScreen> {
           children: [
             searchBar(),
             SizedBox(height: 20),
-            reportCard('IT312 - Networking -BSIT - 1B', '11/03/2024', 'PDF'),
+            reportCard('IT312 - Networking\nBSIT - 1B', '11/03/2024', 'PDF'),
             reportCard(
-                'IT314 - Software Engineering -BSIT - 1C', '11/02/2024', 'CSV'),
+                'IT314 - Software Engineering\nBSIT - 1C', '11/02/2024', 'CSV'),
           ],
         ),
       ),
@@ -54,12 +54,12 @@ class _ReportScreenState extends State<ReportScreen> {
       child: Container(
         width: 350,
         margin: EdgeInsets.symmetric(vertical: 5),
-        padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: grey,
-          borderRadius: BorderRadius.circular(5),
+          color: grey.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: Colors.black,
+            color: blue,
             width: 1,
           ),
         ),
@@ -68,19 +68,20 @@ class _ReportScreenState extends State<ReportScreen> {
           children: [
             Text(
               sectionLabel,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold, color: blue),
             ),
             SizedBox(height: 10),
             Row(
               children: [
                 Text(
                   date,
-                  style: TextStyle(fontSize: 15),
+                  style: TextStyle(fontSize: 15, color: blue),
                 ),
                 SizedBox(width: 30),
                 Text(
                   fileType,
-                  style: TextStyle(fontSize: 15),
+                  style: TextStyle(fontSize: 15, color: blue),
                 ),
               ],
             ),

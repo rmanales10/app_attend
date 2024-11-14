@@ -1,7 +1,7 @@
-import 'package:app_attend/src/api_services/auth_service.dart';
-import 'package:app_attend/src/api_services/firestore_service.dart';
-import 'package:app_attend/src/widgets/color_constant.dart';
-import 'package:app_attend/src/widgets/reusable_function.dart';
+import 'package:app_attend/src/users/api_services/auth_service.dart';
+import 'package:app_attend/src/users/api_services/firestore_service.dart';
+import 'package:app_attend/src/users/widgets/color_constant.dart';
+import 'package:app_attend/src/users/widgets/reusable_function.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -72,19 +72,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Obx(() => Column(
                         children: [
                           leftLabel('Name & surname'),
-                          myTextField(
+                          myDisabledField(
                               '${_firestoreService.userData['fullname'] ?? ''}',
                               Icons.person,
                               fullnameController),
                           SizedBox(height: 10),
                           leftLabel('Email Address'),
-                          myTextField(
+                          myDisabledField(
                               '${_firestoreService.userData['email'] ?? ''}',
                               Icons.email,
                               emailController),
                           SizedBox(height: 10),
                           leftLabel('Phone Number'),
-                          myTextField(
+                          myDisabledField(
                               '${_firestoreService.userData['phone'] ?? ''}',
                               Icons.phone,
                               phoneController),

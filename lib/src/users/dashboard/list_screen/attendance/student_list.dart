@@ -1,8 +1,8 @@
 import 'dart:developer';
 
-import 'package:app_attend/src/api_services/auth_service.dart';
-import 'package:app_attend/src/api_services/firestore_service.dart';
-import 'package:app_attend/src/widgets/color_constant.dart';
+import 'package:app_attend/src/users/api_services/auth_service.dart';
+import 'package:app_attend/src/users/api_services/firestore_service.dart';
+import 'package:app_attend/src/users/widgets/color_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,11 +10,13 @@ class StudentList extends StatefulWidget {
   final String subject;
   final String section;
   final DateTime dateTime;
+  final String time;
   const StudentList({
     super.key,
     required this.subject,
     required this.section,
     required this.dateTime,
+    required this.time,
   });
 
   @override
@@ -49,6 +51,7 @@ class _StudentListState extends State<StudentList> {
       date: widget.dateTime,
       section: widget.section,
       subject: widget.subject,
+      time: widget.time.toString(),
     );
 
     // Fetch the student attendance status for this attendance record
@@ -85,7 +88,8 @@ class _StudentListState extends State<StudentList> {
             ],
           ),
           SizedBox(height: 16),
-          Expanded(
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
             child: Obx(() {
               final sortedStudents = _firestoreService.studentData
                   .where((student) => student['section'] == widget.section)
@@ -99,6 +103,7 @@ class _StudentListState extends State<StudentList> {
                   DataColumn(label: Text('ID Number')),
                   DataColumn(label: Text('Name')),
                   DataColumn(label: Text('Action')),
+                  DataColumn(label: Text('Action')),
                 ],
                 rows: sortedStudents.asMap().entries.map((entry) {
                   int index = entry.key + 1;
@@ -108,6 +113,7 @@ class _StudentListState extends State<StudentList> {
                   return DataRow(cells: [
                     DataCell(Text('$index')),
                     DataCell(Text(student['idnumber'] ?? '')),
+                    DataCell(Text(student['fullname'] ?? '')),
                     DataCell(Text(student['fullname'] ?? '')),
                     DataCell(Checkbox(
                       value: attendanceStatus[student['id']],

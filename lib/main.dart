@@ -1,11 +1,14 @@
-import 'package:app_attend/src/dashboard/dashboard.dart';
-import 'package:app_attend/src/main_screen.dart/login.dart';
-import 'package:app_attend/src/main_screen.dart/register.dart';
+import 'package:app_attend/src/admin/dashboard/dashboard.dart';
+import 'package:app_attend/src/admin/main_screen/admin_login.dart';
+import 'package:app_attend/src/users/dashboard/dashboard.dart';
+import 'package:app_attend/src/users/main_screen.dart/forgot_password.dart';
+import 'package:app_attend/src/users/main_screen.dart/login.dart';
+import 'package:app_attend/src/users/main_screen.dart/register.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'src/main_screen.dart/welcome.dart';
+import 'src/users/main_screen.dart/welcome.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,8 +25,7 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
-
-  runApp(TapAttendApp());
+  kIsWeb ? runApp(TapAttendAppAdmin()) : runApp(TapAttendApp());
 }
 
 class TapAttendApp extends StatelessWidget {
@@ -40,6 +42,24 @@ class TapAttendApp extends StatelessWidget {
         GetPage(name: '/login', page: () => LoginScreen()),
         GetPage(name: '/register', page: () => RegisterScreen()),
         GetPage(name: '/dashboard', page: () => Dashboard()),
+        GetPage(name: '/forgot', page: () => ForgotPassword()),
+      ],
+    );
+  }
+}
+
+class TapAttendAppAdmin extends StatelessWidget {
+  const TapAttendAppAdmin({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'TapAttend',
+      initialRoute: '/dashboard',
+      getPages: [
+        GetPage(name: '/login', page: () => AdminLogin()),
+        GetPage(name: '/dashboard', page: () => AdminDashboard()),
       ],
     );
   }

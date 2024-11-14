@@ -1,7 +1,8 @@
 import 'dart:developer';
 
-import 'package:app_attend/src/api_services/auth_service.dart';
-import 'package:app_attend/src/api_services/firestore_service.dart';
+import 'package:app_attend/src/users/api_services/auth_service.dart';
+import 'package:app_attend/src/users/api_services/firestore_service.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -16,7 +17,8 @@ class CreateAttendance extends StatefulWidget {
 class _CreateAttendanceState extends State<CreateAttendance> {
   final AuthService _authService = Get.put(AuthService());
   final FirestoreService _firestore = Get.put(FirestoreService());
-
+  final TextEditingController _timeController = TextEditingController();
+  final DateFormat _timeFormat = DateFormat("hh:mm a");
   final selectedDate = Rxn<DateTime>();
   final dateFormat = DateFormat('MM/dd/yyyy');
 
@@ -41,6 +43,19 @@ class _CreateAttendanceState extends State<CreateAttendance> {
     'Technopreneurship',
   ];
 
+  void _selectTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (picked != null) {
+      final now = DateTime.now();
+      final selectedTime =
+          DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
+      _timeController.text = _timeFormat.format(selectedTime);
+    }
+  }
+
   RxList<Map<String, dynamic>> attendanceRecords = <Map<String, dynamic>>[].obs;
   final isLoading = true.obs;
 
@@ -48,6 +63,7 @@ class _CreateAttendanceState extends State<CreateAttendance> {
   void initState() {
     super.initState();
     fetchAttendanceRecords();
+    _timeController.text = _timeFormat.format(DateTime.now());
   }
 
   Future<void> fetchAttendanceRecords() async {
@@ -95,6 +111,7 @@ class _CreateAttendanceState extends State<CreateAttendance> {
         date: selectedDate.value!,
         section: selectedSection.value,
         subject: selectedSubject.value,
+        time: _timeController.text,
       );
 
       // Refresh the attendance records after creation
@@ -115,79 +132,108 @@ class _CreateAttendanceState extends State<CreateAttendance> {
         title: const Text('Create Attendance'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
-        child: Column(
-          children: [
-            const SizedBox(height: 50),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Flexible(
-                  child: _buildDropdownSection(
-                    label: 'Select Section:',
-                    selectedValue: selectedSection,
-                    options: sections,
-                    onChanged: (newValue) {
-                      selectedSection.value = newValue!;
-                    },
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: Column(
+            children: [
+              const SizedBox(height: 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Flexible(
+                    child: _buildDropdownSection(
+                      label: 'Select Section:',
+                      selectedValue: selectedSection,
+                      options: sections,
+                      onChanged: (newValue) {
+                        selectedSection.value = newValue!;
+                      },
+                    ),
                   ),
-                ),
-                SizedBox(width: 20), // Add spacing between widgets
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Select Date:'),
-                      GestureDetector(
-                        onTap: () => _selectDate(context),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Obx(() => Text(
-                                    selectedDate.value != null
-                                        ? dateFormat.format(selectedDate.value!)
-                                        : 'MM/DD/YYYY',
-                                    style: const TextStyle(fontSize: 16),
-                                  )),
-                              const SizedBox(width: 8),
-                              const Icon(Icons.calendar_today, size: 20),
-                            ],
+                  SizedBox(width: 20), // Add spacing between widgets
+                  Flexible(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Select Date:'),
+                        GestureDetector(
+                          onTap: () => _selectDate(context),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Obx(() => Text(
+                                      selectedDate.value != null
+                                          ? dateFormat
+                                              .format(selectedDate.value!)
+                                          : 'MM/DD/YYYY',
+                                      style: const TextStyle(fontSize: 16),
+                                    )),
+                                const SizedBox(width: 8),
+                                const Icon(Icons.calendar_today, size: 20),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 50),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _buildDropdownSection(
-                  label: 'Select Subject:',
-                  selectedValue: selectedSubject,
-                  options: subjects,
-                  onChanged: (newValue) {
-                    selectedSubject.value = newValue!;
-                  },
-                ),
-                const SizedBox(height: 20),
-                Obx(() => attendanceDisplay()),
-                const SizedBox(height: 20),
-                addAttendanceButton(),
-              ],
-            ),
-          ],
+                ],
+              ),
+              const SizedBox(height: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text('Select Time:'),
+                  selectTime(),
+                  const SizedBox(height: 20),
+                  _buildDropdownSection(
+                    label: 'Select Subject:',
+                    selectedValue: selectedSubject,
+                    options: subjects,
+                    onChanged: (newValue) {
+                      selectedSubject.value = newValue!;
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Obx(() => attendanceDisplay()),
+                  const SizedBox(height: 20),
+                  addAttendanceButton(),
+                ],
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  SizedBox selectTime() {
+    return SizedBox(
+      width: 200,
+      child: TextField(
+        controller: _timeController,
+        keyboardType: TextInputType.datetime,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          suffixIcon: IconButton(
+            icon: Icon(Icons.access_time),
+            onPressed: _selectTime,
+          ),
+        ),
+        onTap: () {
+          if (_timeController.text.isEmpty) {
+            final now = DateTime.now();
+            _timeController.text = _timeFormat.format(now);
+          }
+        },
       ),
     );
   }

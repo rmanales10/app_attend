@@ -14,8 +14,7 @@ class FirestoreService extends GetxController {
   RxInt presentCount = 0.obs;
   RxInt absentCount = 0.obs;
   RxInt totalCount = 0.obs;
-  var sections = <String>['Empty'].obs;
-  var subjects = <String>['Empty'].obs;
+  var subjects = [].obs;
 
   // Fetch user data
   Future<void> fetchUserData(String documentId) async {
@@ -57,6 +56,7 @@ class FirestoreService extends GetxController {
     required DateTime date,
     required String section,
     required String subject,
+    required String time,
   }) async {
     try {
       QuerySnapshot query = await _firestore
@@ -66,6 +66,7 @@ class FirestoreService extends GetxController {
           .where('date', isEqualTo: Timestamp.fromDate(date))
           .where('subject', isEqualTo: subject)
           .where('section', isEqualTo: section)
+          .where('time', isEqualTo: time)
           .get();
 
       if (query.docs.isNotEmpty) {
@@ -79,6 +80,7 @@ class FirestoreService extends GetxController {
           'date': date,
           'section': section,
           'subject': subject,
+          'time': time,
           'timestamp': FieldValue.serverTimestamp(),
         });
         return docRef.id;
@@ -143,6 +145,7 @@ class FirestoreService extends GetxController {
           'date': (doc['date'] as Timestamp).toDate(),
           'section': doc['section'],
           'subject': doc['subject'],
+          'time': doc['time'] as String,
           'timestamp': (doc['timestamp'] as Timestamp).toDate(),
         };
       }).toList();
@@ -283,14 +286,18 @@ class FirestoreService extends GetxController {
           .collection('attendance')
           .get();
 
-      sections.value = querySnapshot.docs
-          .map((doc) => doc['section'] as String)
-          .toSet()
-          .toList();
-      subjects.value = querySnapshot.docs
-          .map((doc) => doc['subject'] as String)
-          .toSet()
-          .toList();
+      List<Map<String, dynamic>> records = querySnapshot.docs.map((doc) {
+        return {
+          'id': doc.id,
+          'date': doc['date'],
+          'section': doc['section'],
+          'subject': doc['subject'],
+          'time': doc['time'],
+          'timestamp': (doc['timestamp'] as Timestamp).toDate(),
+        };
+      }).toList();
+      subjects.value = records;
+      
     } catch (e) {
       log("Error fetching sections and subjects: $e");
     }

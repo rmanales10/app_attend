@@ -1,4 +1,4 @@
-import 'package:app_attend/src/widgets/color_constant.dart';
+import 'package:app_attend/src/users/widgets/color_constant.dart';
 import 'package:flutter/material.dart';
 
 class TimeClockWidget extends StatelessWidget {
