@@ -1,10 +1,10 @@
-import 'package:app_attend/src/users/api_services/auth_service.dart';
-import 'package:app_attend/src/users/api_services/firestore_service.dart';
-import 'package:app_attend/src/users/dashboard/list_screen/attendance/create_attendance.dart';
+import 'package:app_attend/src/user/api_services/auth_service.dart';
+import 'package:app_attend/src/user/api_services/firestore_service.dart';
+import 'package:app_attend/src/user/dashboard/list_screen/attendance/create_attendance.dart';
 
-import 'package:app_attend/src/users/dashboard/list_screen/attendance/student_list.dart';
-import 'package:app_attend/src/users/widgets/color_constant.dart';
-import 'package:app_attend/src/users/widgets/reusable_function.dart';
+import 'package:app_attend/src/user/dashboard/list_screen/attendance/student_list.dart';
+import 'package:app_attend/src/user/widgets/color_constant.dart';
+import 'package:app_attend/src/user/widgets/reusable_function.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

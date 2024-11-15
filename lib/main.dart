@@ -1,14 +1,14 @@
 import 'package:app_attend/src/admin/dashboard/dashboard.dart';
 import 'package:app_attend/src/admin/main_screen/admin_login.dart';
-import 'package:app_attend/src/users/dashboard/dashboard.dart';
-import 'package:app_attend/src/users/main_screen.dart/forgot_password.dart';
-import 'package:app_attend/src/users/main_screen.dart/login.dart';
-import 'package:app_attend/src/users/main_screen.dart/register.dart';
+import 'package:app_attend/src/user/dashboard/dashboard.dart';
+import 'package:app_attend/src/user/main_screen.dart/forgot_password.dart';
+import 'package:app_attend/src/user/main_screen.dart/login.dart';
+import 'package:app_attend/src/user/main_screen.dart/register.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'src/users/main_screen.dart/welcome.dart';
+import 'src/user/main_screen.dart/welcome.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

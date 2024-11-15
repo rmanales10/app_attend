@@ -1,3 +1,6 @@
+import 'package:app_attend/src/admin/dashboard/screens/Student_page.dart';
+import 'package:app_attend/src/admin/dashboard/screens/home_page.dart';
+import 'package:app_attend/src/admin/dashboard/screens/teacher_page.dart';
 import 'package:flutter/material.dart';
 
 class AdminDashboard extends StatefulWidget {
@@ -20,11 +23,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Widget getContent() {
     switch (currentPage) {
       case 'Dashboard':
-        return Center(child: Text('Dashboard Content'));
-      case 'Revenue':
-        return Center(child: Text('Revenue Content'));
-      case 'Notifications':
-        return Center(child: Text('Notifications Content'));
+        return HomePage();
+      case 'Teacher':
+        return TeacherPage();
+      case 'StudentsList':
+        return StudentPage();
       case 'Analytics':
         return Center(child: Text('Analytics Content'));
       case 'Likes':
@@ -76,7 +79,20 @@ class Sidebar extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Profile Section
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  SizedBox(width: 40),
+                  Image(
+                    image: AssetImage('assets/logo.png'),
+                    width: 50,
+                  ),
+                  Text('Tap Attend',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
+                ],
+              ),
+              SizedBox(height: 30),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -89,35 +105,19 @@ class Sidebar extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Codinglab',
+                        Text('Rolan Manales',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold)),
-                        Text('Web developer',
-                            style: TextStyle(color: Colors.grey)),
+                        Text('Admin', style: TextStyle(color: Colors.grey)),
                       ],
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 20),
 
               // Search Box
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search...',
-                    filled: true,
-                    fillColor: Colors.grey[800],
-                    prefixIcon: Icon(Icons.search, color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              ),
+
               SizedBox(height: 20),
 
               // Menu Items
@@ -126,22 +126,22 @@ class Sidebar extends StatelessWidget {
                 physics: NeverScrollableScrollPhysics(),
                 children: [
                   _buildMenuItem(
-                    Icons.dashboard,
+                    Icons.home,
                     'Dashboard',
                     isSelected: currentPage == 'Dashboard',
                     onTap: () => onPageSelected('Dashboard'),
                   ),
                   _buildMenuItem(
-                    Icons.bar_chart,
-                    'History',
-                    isSelected: currentPage == 'Revenue',
-                    onTap: () => onPageSelected('Revenue'),
+                    Icons.people,
+                    'Teachers lists',
+                    isSelected: currentPage == 'Teacher',
+                    onTap: () => onPageSelected('Teacher'),
                   ),
                   _buildMenuItem(
-                    Icons.notifications,
-                    'Notifications',
-                    isSelected: currentPage == 'Notifications',
-                    onTap: () => onPageSelected('Notifications'),
+                    Icons.subject_sharp,
+                    "Student's List",
+                    isSelected: currentPage == 'StudentsList',
+                    onTap: () => onPageSelected('StudentsList'),
                   ),
                   _buildMenuItem(
                     Icons.analytics,
@@ -210,82 +210,6 @@ class Sidebar extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       onTap: onTap,
-    );
-  }
-}
-
-class StudentList extends StatelessWidget {
-  final List<Map<String, String>> students = [
-    {'id': '2022345634', 'name': 'Abella, Alvin'},
-    {'id': '2022347834', 'name': 'Binaoro, Kent'},
-    {'id': '2022344534', 'name': 'Catalan, Ben'},
-    {'id': '2022349034', 'name': 'Daniel, Mae'},
-    {'id': '2022343034', 'name': 'Espito, Anne'},
-    {'id': '2022349067', 'name': 'Espina, Angel'},
-    {'id': '2022349034', 'name': 'Flores, Mae'},
-    {'id': '2022349034', 'name': 'Maglinas, April'},
-    {'id': '2022349034', 'name': 'Ozaraga, Honey'},
-    {'id': '2022349034', 'name': 'Zyl, Ryl'},
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                'List of Students',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              Spacer(),
-              ElevatedButton.icon(
-                onPressed: () {
-                  // Add new student logic here
-                },
-                icon: Icon(Icons.add),
-                label: Text('Add Student'),
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: [
-                  DataColumn(label: Text('No.')),
-                  DataColumn(label: Text('ID Number')),
-                  DataColumn(label: Text('Name')),
-                  DataColumn(label: Text('Action')),
-                ],
-                rows: List<DataRow>.generate(
-                  students.length,
-                  (index) => DataRow(
-                    cells: [
-                      DataCell(Text((index + 1).toString())),
-                      DataCell(Text(students[index]['id']!)),
-                      DataCell(Text(students[index]['name']!)),
-                      DataCell(
-                        IconButton(
-                          icon: Icon(Icons.delete),
-                          color: Colors.red,
-                          onPressed: () {
-                            // Delete student logic here
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

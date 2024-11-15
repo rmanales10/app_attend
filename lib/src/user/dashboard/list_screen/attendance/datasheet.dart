@@ -1,4 +1,4 @@
-import 'package:app_attend/src/users/widgets/attendance_sheet.dart';
+import 'package:app_attend/src/user/widgets/attendance_sheet.dart';
 import 'package:flutter/material.dart';
 
 class Datasheet extends StatelessWidget {

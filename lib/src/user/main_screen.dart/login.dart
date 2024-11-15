@@ -1,18 +1,20 @@
+import 'dart:developer';
+import 'package:app_attend/src/user/api_services/firestore_service.dart';
 import 'package:app_attend/src/user/widgets/color_constant.dart';
 import 'package:app_attend/src/user/widgets/reusable_function.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:app_attend/src/user/api_services/auth_service.dart';
 
-class AdminLogin extends StatefulWidget {
-  const AdminLogin({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _AdminLoginState createState() => _AdminLoginState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _AdminLoginState extends State<AdminLogin> {
+class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final email = TextEditingController();
   final password = TextEditingController();

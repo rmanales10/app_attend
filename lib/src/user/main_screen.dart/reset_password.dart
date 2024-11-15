@@ -1,29 +1,30 @@
-import 'package:app_attend/src/users/main_screen.dart/reset_password.dart';
-import 'package:app_attend/src/users/widgets/color_constant.dart';
-import 'package:app_attend/src/users/widgets/reusable_function.dart';
+import 'package:app_attend/src/user/widgets/color_constant.dart';
+import 'package:app_attend/src/user/widgets/reusable_function.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:app_attend/src/users/api_services/auth_service.dart';
+import 'package:app_attend/src/user/api_services/auth_service.dart';
 
-class ForgotPassword extends StatefulWidget {
-  const ForgotPassword({super.key});
+// ignore: must_be_immutable
+class ResetPassword extends StatefulWidget {
+  String? email;
+  ResetPassword({super.key, required this.email});
 
   @override
   // ignore: library_private_types_in_public_api
-  _ForgotPasswordState createState() => _ForgotPasswordState();
+  _ResetPasswordState createState() => _ResetPasswordState();
 }
 
-class _ForgotPasswordState extends State<ForgotPassword> {
+class _ResetPasswordState extends State<ResetPassword> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final email = TextEditingController();
+  final resetCode = TextEditingController();
+  final newPassword = TextEditingController();
+  final confirmPassword = TextEditingController();
+
   RxBool isObscured = true.obs;
   final AuthService _authService = Get.put(AuthService());
 
   Future<void> resetPassword() async {
-    if (formKey.currentState?.validate() == true) {
-      await _authService.resetPassword(email.text);
-      Get.to(() => ResetPassword(email: email.text));
-    }
+    // await _authService.resetPassword(email.text);
   }
 
   @override
@@ -36,7 +37,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             child: Column(
               children: [
                 Text(
-                  'Forgot Password',
+                  'Recovery Password',
                   style: TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
@@ -58,19 +59,23 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       children: [
                         formLabel('Email'),
                         SizedBox(height: 8.0),
-                        myTextField('Enter your email address', Icons.email,
-                            email, emailValidator),
+                        myDisabledField(
+                          widget.email.toString(),
+                          Icons.email,
+                          resetCode,
+                        ),
                         SizedBox(height: 10.0),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 50),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Column(
                     children: [
-                      myButton('Reset Password', blue, resetPassword),
+                      myButton('Reset Password', blue,
+                          resetPassword), // Call _loginUser
                       SizedBox(height: 10),
                       labelTap(context, 'Already have an account? ', 'Log in',
                           () => Get.toNamed('/login'))

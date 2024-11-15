@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:app_attend/src/users/api_services/auth_service.dart';
-import 'package:app_attend/src/users/api_services/firestore_service.dart';
+import 'package:app_attend/src/user/api_services/auth_service.dart';
+import 'package:app_attend/src/user/api_services/firestore_service.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
