@@ -5,11 +5,7 @@ class StudentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
-      appBar: AppBar(
-        title: Text('Student List'),
-        backgroundColor: Colors.blueGrey,
-      ),
+    return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Card(
@@ -33,7 +29,8 @@ class StudentPage extends StatelessWidget {
                     label: Text('Add Student'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     ),
                   ),
                 ),
@@ -45,13 +42,24 @@ class StudentPage extends StatelessWidget {
                     child: DataTable(
                       headingRowHeight: 40,
                       columnSpacing: 30, // Adjust column spacing as needed
-                      headingRowColor: MaterialStateProperty.all(Colors.blueGrey.shade100),
+                      headingRowColor:
+                          MaterialStateProperty.all(Colors.blueGrey.shade100),
                       columns: [
-                        DataColumn(label: Text('Student ID', style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(label: Text('Student Name', style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(label: Text('Grade', style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(label: Text('Section', style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(label: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold))),
+                        DataColumn(
+                            label: Text('Student ID',
+                                style: TextStyle(fontWeight: FontWeight.bold))),
+                        DataColumn(
+                            label: Text('Student Name',
+                                style: TextStyle(fontWeight: FontWeight.bold))),
+                        DataColumn(
+                            label: Text('Grade',
+                                style: TextStyle(fontWeight: FontWeight.bold))),
+                        DataColumn(
+                            label: Text('Section',
+                                style: TextStyle(fontWeight: FontWeight.bold))),
+                        DataColumn(
+                            label: Text('Actions',
+                                style: TextStyle(fontWeight: FontWeight.bold))),
                       ],
                       rows: [
                         _buildDataRow('S001', 'Alice Johnson', 'Grade 10', 'A'),

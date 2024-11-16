@@ -1,3 +1,4 @@
+import 'package:app_attend/src/admin/dashboard/screens/profile.dart';
 import 'package:app_attend/src/admin/dashboard/screens/Student_page.dart';
 import 'package:app_attend/src/admin/dashboard/screens/home_page.dart';
 import 'package:app_attend/src/admin/dashboard/screens/teacher_page.dart';
@@ -28,12 +29,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
         return TeacherPage();
       case 'StudentsList':
         return StudentPage();
-      case 'Analytics':
-        return Center(child: Text('Analytics Content'));
-      case 'Likes':
-        return Center(child: Text('Likes Content'));
-      case 'Wallets':
-        return Center(child: Text('Wallets Content'));
+      case 'Profile':
+        return PersonalInfoPage();
       default:
         return Center(child: Text('Main Content Area'));
     }
@@ -133,7 +130,7 @@ class Sidebar extends StatelessWidget {
                   ),
                   _buildMenuItem(
                     Icons.people,
-                    'Teachers lists',
+                    'Teacher\'s List',
                     isSelected: currentPage == 'Teacher',
                     onTap: () => onPageSelected('Teacher'),
                   ),
@@ -145,21 +142,9 @@ class Sidebar extends StatelessWidget {
                   ),
                   _buildMenuItem(
                     Icons.analytics,
-                    'Analytics',
-                    isSelected: currentPage == 'Analytics',
-                    onTap: () => onPageSelected('Analytics'),
-                  ),
-                  _buildMenuItem(
-                    Icons.favorite,
-                    'Likes',
-                    isSelected: currentPage == 'Likes',
-                    onTap: () => onPageSelected('Likes'),
-                  ),
-                  _buildMenuItem(
-                    Icons.account_balance_wallet,
-                    'Wallets',
-                    isSelected: currentPage == 'Wallets',
-                    onTap: () => onPageSelected('Wallets'),
+                    'Profile',
+                    isSelected: currentPage == 'Profile',
+                    onTap: () => onPageSelected('Profile'),
                   ),
                 ],
               ),
@@ -170,17 +155,7 @@ class Sidebar extends StatelessWidget {
                 leading: Icon(Icons.logout, color: Colors.grey),
                 title: Text('Logout', style: TextStyle(color: Colors.white)),
               ),
-              ListTile(
-                leading: Icon(Icons.light_mode, color: Colors.grey),
-                title:
-                    Text('Light Mode', style: TextStyle(color: Colors.white)),
-                trailing: Switch(
-                  value: isLightMode,
-                  onChanged: (value) {
-                    // Toggle light mode here
-                  },
-                ),
-              ),
+
               SizedBox(height: 20),
             ],
           ),
