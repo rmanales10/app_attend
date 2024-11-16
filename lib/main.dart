@@ -56,7 +56,7 @@ class TapAttendAppAdmin extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'TapAttend',
-      initialRoute: '/dashboard',
+      initialRoute: '/login',
       getPages: [
         GetPage(name: '/login', page: () => AdminLogin()),
         GetPage(name: '/dashboard', page: () => AdminDashboard()),

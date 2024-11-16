@@ -1,8 +1,7 @@
-import 'package:app_attend/src/user/widgets/color_constant.dart';
-import 'package:app_attend/src/user/widgets/reusable_function.dart';
+import 'package:app_attend/src/admin/main_screen/color_constant.dart';
+import 'package:app_attend/src/admin/main_screen/reusable_function.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:app_attend/src/user/api_services/auth_service.dart';
 
 class AdminLogin extends StatefulWidget {
   const AdminLogin({super.key});
@@ -14,92 +13,88 @@ class AdminLogin extends StatefulWidget {
 
 class _AdminLoginState extends State<AdminLogin> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final email = TextEditingController();
+  final username = TextEditingController();
   final password = TextEditingController();
   RxBool isObscured = true.obs;
-
-  final AuthService _authService = Get.put(AuthService());
-
-  Future<void> _loginUser() async {
-    if (formKey.currentState?.validate() == true) {
-      _authService.loginUser(email.text, password.text);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: blue,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Text(
-                  'Log in',
-                  style: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+      backgroundColor: blue.withOpacity(.5),
+      body: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            color: blue,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.blue.withOpacity(0.2),
+                spreadRadius: 2,
+                blurRadius: 4,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          width: 500,
+          height: 500,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Admin Login',
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                SizedBox(height: 30.0),
-                Container(
-                  padding: EdgeInsets.all(24.0),
-                  margin: EdgeInsets.symmetric(horizontal: 24.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        formLabel('Email'),
-                        SizedBox(height: 8.0),
-                        myTextField('Enter your email address', Icons.email,
-                            email, emailValidator),
-                        SizedBox(height: 20.0),
-                        formLabel('Password'),
-                        SizedBox(height: 8.0),
-                        Obx(() => myPasswordField('Insert password',
-                                Icons.visibility, isObscured.value, () {
-                              isObscured.value = !isObscured.value;
-                            }, password, passwordValidator)),
-                        SizedBox(height: 10.0),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () => Get.toNamed('/forgot'),
-                            child: const Text(
-                              'Forgot password?',
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+              ),
+              SizedBox(height: 30.0),
+              Container(
+                padding: EdgeInsets.all(24.0),
+                margin: EdgeInsets.symmetric(horizontal: 24.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
-                SizedBox(height: 50),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Form(
+                  key: formKey,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      myButton('Log in', blue, _loginUser), // Call _loginUser
-                      SizedBox(height: 10),
-                      labelTap(context, 'Don\'t have an account? ',
-                          'Create an Account', () => Get.toNamed('/register'))
+                      formLabel('Username'),
+                      SizedBox(height: 8.0),
+                      myTextField('Enter your username', Icons.email, username,
+                          usernameValidator),
+                      SizedBox(height: 20.0),
+                      formLabel('Password'),
+                      SizedBox(height: 8.0),
+                      Obx(() => myPasswordField('Insert password',
+                              Icons.visibility, isObscured.value, () {
+                            isObscured.value = !isObscured.value;
+                          }, password, passwordValidator)),
+                      SizedBox(height: 10.0),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 30),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  children: [
+                    myButton('Log in', blue, () {
+                      if (username.text == 'admin' &&
+                          password.text == 'admin1234') {
+                        Get.offAllNamed('/dashboard');
+                        Get.snackbar('Success', 'Admin Login Successfully');
+                      } else {
+                        Get.snackbar('Error', 'Error while login');
+                      }
+                    }), // Call _loginUser
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

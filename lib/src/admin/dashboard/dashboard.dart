@@ -3,6 +3,7 @@ import 'package:app_attend/src/admin/dashboard/screens/Student_page.dart';
 import 'package:app_attend/src/admin/dashboard/screens/home_page.dart';
 import 'package:app_attend/src/admin/dashboard/screens/teacher_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -29,8 +30,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
         return TeacherPage();
       case 'StudentsList':
         return StudentPage();
-      case 'Profile':
-        return PersonalInfoPage();
+      // case 'Profile':
+      //   return PersonalInfoPage();
       default:
         return Center(child: Text('Main Content Area'));
     }
@@ -59,6 +60,7 @@ class Sidebar extends StatelessWidget {
   final Function(String) onPageSelected;
 
   const Sidebar({
+    super.key,
     required this.currentPage,
     required this.onPageSelected,
   });
@@ -135,17 +137,23 @@ class Sidebar extends StatelessWidget {
                     onTap: () => onPageSelected('Teacher'),
                   ),
                   _buildMenuItem(
-                    Icons.subject_sharp,
+                    Icons.star_border,
                     "Student's List",
                     isSelected: currentPage == 'StudentsList',
                     onTap: () => onPageSelected('StudentsList'),
                   ),
                   _buildMenuItem(
-                    Icons.analytics,
-                    'Profile',
-                    isSelected: currentPage == 'Profile',
-                    onTap: () => onPageSelected('Profile'),
+                    Icons.book,
+                    "Subjects",
+                    isSelected: currentPage == 'Subjects',
+                    onTap: () => onPageSelected('Subjects'),
                   ),
+                  // _buildMenuItem(
+                  //   Icons.analytics,
+                  //   'Profile',
+                  //   isSelected: currentPage == 'Profile',
+                  //   onTap: () => onPageSelected('Profile'),
+                  // ),
                 ],
               ),
 
@@ -154,6 +162,7 @@ class Sidebar extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.logout, color: Colors.grey),
                 title: Text('Logout', style: TextStyle(color: Colors.white)),
+                onTap: () => Get.offAllNamed('/login'),
               ),
 
               SizedBox(height: 20),
