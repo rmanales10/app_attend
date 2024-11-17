@@ -1,175 +1,143 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart'; // Import for date formatting
+import 'package:app_attend/src/admin/firebase/firestore.dart';
 
 class StudentPage extends StatelessWidget {
-  const StudentPage({super.key});
+  StudentPage({super.key});
+
+  final Firestore _firestore = Get.put(Firestore());
 
   @override
   Widget build(BuildContext context) {
+    // Fetch users when the widget is built
+    _firestore.fetchAllUsers();
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Add Student Button inside the Card
-                Align(
-                  alignment: Alignment.topRight,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      _showAddStudentDialog(context);
-                    },
-                    icon: Icon(Icons.add),
-                    label: Text('Add Student'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 5),
+              Row(
+                children: [
+                  Text(
+                    'Student\'s List',
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),
-                ),
-                SizedBox(height: 16),
-                // Horizontal scrollable Data Table
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DataTable(
-                      headingRowHeight: 40,
-                      columnSpacing: 30, // Adjust column spacing as needed
-                      headingRowColor:
-                          MaterialStateProperty.all(Colors.blueGrey.shade100),
+                  Spacer(),
+                  ElevatedButton(
+                      onPressed: () {
+                        Get.dialog(AlertDialog(
+                          title: Text('Add Student'),
+                          content: SizedBox(
+                            height: 300,
+                            child: Column(
+                              children: [
+                                TextField(
+                                  decoration: InputDecoration(
+                                      labelText: 'IdNumber',
+                                      border: OutlineInputBorder()),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ));
+                      },
+                      child: Row(
+                        children: [Icon(Icons.add), Text('Add Student')],
+                      ))
+                ],
+              ),
+              Center(
+                child: Container(
+                  margin: EdgeInsets.only(top: 150),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Obx(() {
+                    // Display a loading indicator while fetching
+                    if (_firestore.allUsers.isEmpty) {
+                      return Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+
+                    // Build the DataTable rows dynamically
+                    return DataTable(
                       columns: [
-                        DataColumn(
-                            label: Text('Student ID',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(
-                            label: Text('Student Name',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(
-                            label: Text('Grade',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(
-                            label: Text('Section',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(
-                            label: Text('Actions',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
+                        DataColumn(label: Text('No.')),
+                        DataColumn(label: Text('Fullname')),
+                        DataColumn(label: Text('Email')),
+                        DataColumn(label: Text('Phone Number')),
+                        DataColumn(label: Text('Created at')),
+                        DataColumn(label: Text('Actions')),
                       ],
-                      rows: [
-                        _buildDataRow('S001', 'Alice Johnson', 'Grade 10', 'A'),
-                        _buildDataRow('S002', 'Bob Smith', 'Grade 10', 'B'),
-                        _buildDataRow('S003', 'Carol Lee', 'Grade 11', 'A'),
-                        _buildDataRow('S004', 'David Kim', 'Grade 12', 'C'),
-                      ],
-                    ),
-                  ),
+                      rows: _firestore.allUsers.asMap().entries.map((entry) {
+                        int index = entry.key + 1;
+                        Map<String, dynamic> user = entry.value;
+
+                        // Convert Firestore Timestamp to a formatted DateTime string
+                        String formattedDate = user['createdAt'] != null
+                            ? DateFormat('yyyy-MM-dd HH:mm').format(
+                                (user['createdAt'] as Timestamp).toDate())
+                            : 'N/A';
+
+                        return DataRow(cells: [
+                          DataCell(Text('$index')), // Row number
+                          DataCell(Text(user['fullname'] ?? 'N/A')),
+                          DataCell(Text(user['email'] ?? 'N/A')),
+                          DataCell(Text(user['phone'] ?? 'N/A')),
+                          DataCell(Text(formattedDate)), // Formatted DateTime
+                          DataCell(IconButton(
+                            onPressed: () {
+                              Get.dialog(AlertDialog(
+                                title: Text('Confirmation'),
+                                content: Text(
+                                    'Are you sure you want to delete this?'),
+                                actions: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      _firestore.deleteUser(user['id']);
+                                      Get.back();
+                                      Get.snackbar('Success',
+                                          'User deleted successfully');
+                                    },
+                                    child: Text('Yes'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () => Get.back(),
+                                    child: Text('No'),
+                                  ),
+                                ],
+                              ));
+                            },
+                            icon: Icon(Icons.delete),
+                          )),
+                        ]);
+                      }).toList(),
+                    );
+                  }),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
-
-  DataRow _buildDataRow(String id, String name, String grade, String section) {
-    return DataRow(
-      cells: [
-        DataCell(Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(id),
-        )),
-        DataCell(Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(name),
-        )),
-        DataCell(Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(grade),
-        )),
-        DataCell(Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(section),
-        )),
-        DataCell(Row(
-          children: [
-            IconButton(
-              onPressed: () {
-                // Edit functionality
-              },
-              icon: Icon(Icons.edit),
-              color: Colors.blue,
-            ),
-            IconButton(
-              onPressed: () {
-                // Delete functionality
-              },
-              icon: Icon(Icons.delete),
-              color: Colors.red,
-            ),
-          ],
-        )),
-      ],
-    );
-  }
-
-  void _showAddStudentDialog(BuildContext context) {
-    final _idController = TextEditingController();
-    final _nameController = TextEditingController();
-    final _gradeController = TextEditingController();
-    final _sectionController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Add Student'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: _idController,
-                  decoration: InputDecoration(labelText: 'Student ID'),
-                ),
-                TextField(
-                  controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Student Name'),
-                ),
-                TextField(
-                  controller: _gradeController,
-                  decoration: InputDecoration(labelText: 'Grade'),
-                ),
-                TextField(
-                  controller: _sectionController,
-                  decoration: InputDecoration(labelText: 'Section'),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Handle adding new student (e.g., save data and update the table)
-                Navigator.of(context).pop();
-              },
-              child: Text('Add'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

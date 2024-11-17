@@ -1,5 +1,3 @@
-import 'dart:developer';
-import 'package:app_attend/src/user/api_services/firestore_service.dart';
 import 'package:app_attend/src/user/widgets/color_constant.dart';
 import 'package:app_attend/src/user/widgets/reusable_function.dart';
 import 'package:flutter/material.dart';

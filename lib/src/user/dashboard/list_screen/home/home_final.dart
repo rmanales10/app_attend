@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:app_attend/src/user/api_services/auth_service.dart';
 import 'package:app_attend/src/user/api_services/firestore_service.dart';
 import 'package:app_attend/src/user/widgets/color_constant.dart';

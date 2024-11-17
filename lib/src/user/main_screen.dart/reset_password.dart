@@ -2,7 +2,6 @@ import 'package:app_attend/src/user/widgets/color_constant.dart';
 import 'package:app_attend/src/user/widgets/reusable_function.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:app_attend/src/user/api_services/auth_service.dart';
 
 // ignore: must_be_immutable
 class ResetPassword extends StatefulWidget {
@@ -21,7 +20,6 @@ class _ResetPasswordState extends State<ResetPassword> {
   final confirmPassword = TextEditingController();
 
   RxBool isObscured = true.obs;
-  final AuthService _authService = Get.put(AuthService());
 
   Future<void> resetPassword() async {
     // await _authService.resetPassword(email.text);
