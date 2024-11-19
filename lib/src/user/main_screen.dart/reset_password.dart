@@ -72,8 +72,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Column(
                     children: [
-                      myButton('Reset Password', blue,
-                          resetPassword), // Call _loginUser
+                      myButton('Reset Password', blue, resetPassword),
                       SizedBox(height: 10),
                       labelTap(context, 'Already have an account? ', 'Log in',
                           () => Get.toNamed('/login'))

@@ -22,7 +22,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Future<void> resetPassword() async {
     if (formKey.currentState?.validate() == true) {
       await _authService.resetPassword(email.text);
-      Get.to(() => ResetPassword(email: email.text));
+      // Get.to(() => ResetPassword(email: email.text));
+      Get.toNamed('login');
     }
   }
 

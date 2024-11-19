@@ -89,7 +89,6 @@ class _StudentListState extends State<StudentList> {
           ),
           SizedBox(height: 16),
           SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
             child: Obx(() {
               final sortedStudents = _firestoreService.studentData
                   .where((student) => student['section'] == widget.section)
@@ -103,7 +102,6 @@ class _StudentListState extends State<StudentList> {
                   DataColumn(label: Text('ID Number')),
                   DataColumn(label: Text('Name')),
                   DataColumn(label: Text('Action')),
-                  DataColumn(label: Text('Action')),
                 ],
                 rows: sortedStudents.asMap().entries.map((entry) {
                   int index = entry.key + 1;
@@ -113,7 +111,6 @@ class _StudentListState extends State<StudentList> {
                   return DataRow(cells: [
                     DataCell(Text('$index')),
                     DataCell(Text(student['idnumber'] ?? '')),
-                    DataCell(Text(student['fullname'] ?? '')),
                     DataCell(Text(student['fullname'] ?? '')),
                     DataCell(Checkbox(
                       value: attendanceStatus[student['id']],

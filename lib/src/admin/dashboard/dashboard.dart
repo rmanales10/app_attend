@@ -1,6 +1,6 @@
-import 'package:app_attend/src/admin/dashboard/screens/profile.dart';
 import 'package:app_attend/src/admin/dashboard/screens/Student_page.dart';
 import 'package:app_attend/src/admin/dashboard/screens/home_page.dart';
+import 'package:app_attend/src/admin/dashboard/screens/subject1.dart';
 import 'package:app_attend/src/admin/dashboard/screens/teacher_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,6 +30,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
         return TeacherPage();
       case 'StudentsList':
         return StudentPage();
+       case 'Subjects':
+        return ManageSubjectsPage();
       // case 'Profile':
       //   return PersonalInfoPage();
       default:
@@ -72,7 +74,7 @@ class Sidebar extends StatelessWidget {
 
     return Material(
       color: Color(0xFF1E1E2C),
-      child: Container(
+      child: SizedBox(
         width: 250,
         height: screenHeight,
         child: SingleChildScrollView(
