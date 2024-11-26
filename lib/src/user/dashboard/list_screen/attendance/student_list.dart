@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:app_attend/src/user/api_services/auth_service.dart';
 import 'package:app_attend/src/user/api_services/firestore_service.dart';
-import 'package:app_attend/src/user/widgets/color_constant.dart';
+import 'package:app_attend/src/widgets/color_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

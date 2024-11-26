@@ -1,4 +1,4 @@
-import 'package:app_attend/src/user/widgets/color_constant.dart';
+import 'package:app_attend/src/widgets/color_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

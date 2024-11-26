@@ -23,12 +23,13 @@ class TeacherPage extends StatelessWidget {
             children: [
               SizedBox(height: 5),
               Text(
-                'Teacher\'s List',
+                'Teachers',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
               Center(
                 child: Container(
-                  margin: EdgeInsets.only(top: 150),
+                  margin: EdgeInsets.only(top: 50),
+                  width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
@@ -55,10 +56,10 @@ class TeacherPage extends StatelessWidget {
                     return DataTable(
                       columns: [
                         DataColumn(label: Text('No.')),
-                        DataColumn(label: Text('Fullname')),
-                        DataColumn(label: Text('Email')),
-                        DataColumn(label: Text('Phone Number')),
-                        DataColumn(label: Text('Created at')),
+                        DataColumn(label: Text('Name')),
+                        DataColumn(label: Text('Department')),
+                        DataColumn(label: Text('Subjects')),
+                        DataColumn(label: Text('Sections')),
                         DataColumn(label: Text('Actions')),
                       ],
                       rows: _firestore.allUsers.asMap().entries.map((entry) {

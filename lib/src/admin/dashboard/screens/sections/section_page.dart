@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 
 import 'package:app_attend/src/admin/firebase/firestore.dart';
 
-class StudentPage extends StatelessWidget {
-  StudentPage({super.key});
+class SectionPage extends StatelessWidget {
+  SectionPage({super.key});
 
   final Firestore _firestore = Get.put(Firestore());
 
@@ -13,7 +13,23 @@ class StudentPage extends StatelessWidget {
     final idNumber = TextEditingController();
     final fullName = TextEditingController();
     final section = TextEditingController();
+    final formkey = GlobalKey<FormState>();
     _firestore.getAllStudent();
+
+    addStudent() {
+      if (formkey.currentState?.validate() == true) {
+        _firestore.addStudent(
+            fullname: fullName.text,
+            idnumber: idNumber.text,
+            section: section.text);
+        _firestore.getAllStudent();
+        Get.back();
+        // Get.snackbar('Success', 'Student added successfully');
+        fullName.clear();
+        idNumber.clear();
+        section.clear();
+      }
+    }
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -25,7 +41,7 @@ class StudentPage extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    'Student\'s List',
+                    'Sections',
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
@@ -34,34 +50,32 @@ class StudentPage extends StatelessWidget {
                         Get.dialog(AlertDialog(
                           title: Text('Add Student'),
                           content: SizedBox(
-                            height: 180,
+                            height: 230,
                             width: 300,
-                            child: Column(
-                              children: [
-                                inputStudentField('ID Number', idNumber),
-                                SizedBox(height: 10),
-                                inputStudentField('Fullname', fullName),
-                                SizedBox(height: 10),
-                                inputStudentField('Section', section),
-                                SizedBox(height: 10),
-                              ],
+                            child: Form(
+                              key: formkey,
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 10),
+                                  Align(
+                                      alignment: AlignmentDirectional.topStart,
+                                      child: Text('Name of Student')),
+                                  inputStudentField('Ex: Mercedes, Maria P.',
+                                      fullName, fullNameValidator),
+                                  SizedBox(height: 10),
+                                  Align(
+                                      alignment: AlignmentDirectional.topStart,
+                                      child: Text('Course & Year')),
+                                  inputStudentField('Ex: BSIT - 2E', section,
+                                      courseValidator),
+                                  SizedBox(height: 10),
+                                ],
+                              ),
                             ),
                           ),
                           actions: [
                             ElevatedButton(
-                                onPressed: () {
-                                  _firestore.addStudent(
-                                      fullname: fullName.text,
-                                      idnumber: idNumber.text,
-                                      section: section.text);
-                                  _firestore.getAllStudent();
-                                  Get.back();
-                                  Get.snackbar(
-                                      'Success', 'Student added successfully');
-                                  fullName.clear();
-                                  idNumber.clear();
-                                  section.clear();
-                                },
+                                onPressed: () => addStudent(),
                                 child: Text('Submit')),
                             ElevatedButton(
                                 onPressed: () {
@@ -72,7 +86,7 @@ class StudentPage extends StatelessWidget {
                         ));
                       },
                       child: Row(
-                        children: [Icon(Icons.add), Text('Add Student')],
+                        children: [Icon(Icons.add), Text('Add Section')],
                       ))
                 ],
               ),
@@ -104,11 +118,11 @@ class StudentPage extends StatelessWidget {
                   // Build the DataTable rows dynamically
                   return DataTable(
                     columns: [
-                      DataColumn(label: Text('No.')),
-                      DataColumn(label: Text('ID Number')),
-                      DataColumn(label: Text('Fullname')),
                       DataColumn(label: Text('Section')),
-                      DataColumn(label: Text('Actions')),
+                      DataColumn(label: Text('Year Level')),
+                      DataColumn(label: Text('Instructor')),
+                      DataColumn(label: Text('Students')),
+                      DataColumn(label: Text('Acions')),
                     ],
                     rows: _firestore.studentData.asMap().entries.map((entry) {
                       int index = entry.key + 1;
@@ -116,8 +130,9 @@ class StudentPage extends StatelessWidget {
 
                       return DataRow(cells: [
                         DataCell(Text(index.toString())), // Row number
-                        DataCell(Text(user['idnumber'])), // Row number
                         DataCell(Text(user['fullname'] ?? 'N/A')),
+                        DataCell(Text(user['fullname'] ?? 'N/A')),
+
                         DataCell(Text(user['section'] ?? 'N/A')),
                         DataCell(Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -164,11 +179,46 @@ class StudentPage extends StatelessWidget {
     );
   }
 
-  TextField inputStudentField(String label, TextEditingController controller) {
-    return TextField(
+  TextFormField inputStudentField(String label,
+      TextEditingController controller, FormFieldValidator<String> validator) {
+    return TextFormField(
+      validator: validator,
       controller: controller,
-      decoration:
-          InputDecoration(labelText: label, border: OutlineInputBorder()),
+      decoration: InputDecoration(
+        hintText: label,
+        border: OutlineInputBorder(),
+      ),
     );
+  }
+
+  String? fullNameValidator(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your full name';
+    }
+
+    // Split the input by spaces
+    List<String> nameParts = value.trim().split(' ');
+
+    // Check if there are at least two words
+    if (nameParts.length < 2) {
+      return 'Please enter both first and last names';
+    }
+
+    // Check if each word starts with a capital letter (optional)
+    for (String part in nameParts) {
+      if (part.isEmpty || part[0] != part[0].toUpperCase()) {
+        return 'Each name should start with a capital letter';
+      }
+    }
+
+    return null; // Validation passed
+  }
+
+  String? courseValidator(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter course & year';
+    }
+
+    return null; // Validation passed
   }
 }

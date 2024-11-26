@@ -25,11 +25,11 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
-  kIsWeb ? runApp(TapAttendAppAdmin()) : runApp(TapAttendApp());
+  kIsWeb ? runApp(Admin()) : runApp(User());
 }
 
-class TapAttendApp extends StatelessWidget {
-  const TapAttendApp({super.key});
+class User extends StatelessWidget {
+  const User({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,15 +48,15 @@ class TapAttendApp extends StatelessWidget {
   }
 }
 
-class TapAttendAppAdmin extends StatelessWidget {
-  const TapAttendAppAdmin({super.key});
+class Admin extends StatelessWidget {
+  const Admin({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'TapAttend',
-      initialRoute: '/login',
+      initialRoute: '/dashboard',
       getPages: [
         GetPage(name: '/login', page: () => AdminLogin()),
         GetPage(name: '/dashboard', page: () => AdminDashboard()),

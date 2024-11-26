@@ -2,7 +2,7 @@ import 'package:app_attend/src/user/dashboard/list_screen/attendance/attendance_
 import 'package:app_attend/src/user/dashboard/list_screen/home/home_final.dart';
 import 'package:app_attend/src/user/dashboard/list_screen/report/report_screen.dart';
 import 'package:app_attend/src/user/dashboard/list_screen/profile/profile_screen.dart';
-import 'package:app_attend/src/user/widgets/color_constant.dart';
+import 'package:app_attend/src/widgets/color_constant.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {

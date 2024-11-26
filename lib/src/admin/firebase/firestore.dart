@@ -40,9 +40,8 @@ class Firestore extends GetxController {
           await _firestore.collection('students').get();
       studentData.value = querySnapshot.docs.map((doc) {
         return {
-          'id': doc.id,
-          'fullname': doc['fullname'],
-          'idnumber': doc['idnumber'],
+          'name': doc['name'],
+          'year_level': doc['year_level'],
           'section': doc['section'],
         };
       }).toList();

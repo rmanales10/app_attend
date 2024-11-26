@@ -1,3 +1,5 @@
+import 'package:app_attend/src/admin/main_screen/color_constant.dart';
+import 'package:app_attend/src/widgets/status_card.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -40,10 +42,14 @@ class HomePage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  cardBox(0, 'Total Teachers', Icons.people_alt),
-                  cardBox(0, 'Total Students', Icons.people_alt),
-                  cardBox(0, 'Total Sections', Icons.people_alt),
-                  cardBox(0, 'Total Subjects', Icons.people_alt),
+                  _buildCards('Teachers', Icons.cancel_presentation, '50+',
+                      'Track teachers attendance and schedules'),
+                  _buildCards('Teachers', Icons.cancel_presentation, '50+',
+                      'Track teachers attendance and schedules'),
+                  _buildCards('Teachers', Icons.cancel_presentation, '50+',
+                      'Track teachers attendance and schedules'),
+                  _buildCards('Teachers', Icons.cancel_presentation, '50+',
+                      'Track teachers attendance and schedules'),
                 ],
               ),
               SizedBox(
@@ -158,6 +164,47 @@ class HomePage extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Container _buildCards(
+      String title, IconData icon, String total, String label) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 10),
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+          color: blue.withOpacity(.2),
+          blurRadius: 1,
+          offset: Offset(0, 4),
+        ),
+      ], borderRadius: BorderRadius.circular(5)),
+      width: 280,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            children: [
+              Text(
+                title,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Spacer(),
+              Icon(icon)
+            ],
+          ),
+          SizedBox(height: 5),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              total,
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+          ),
+          SizedBox(height: 5),
+          Align(alignment: Alignment.topLeft, child: Text(label))
+        ],
       ),
     );
   }

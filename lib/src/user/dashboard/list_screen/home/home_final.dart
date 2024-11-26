@@ -1,11 +1,13 @@
+import 'dart:developer';
+
 import 'package:app_attend/src/user/api_services/auth_service.dart';
 import 'package:app_attend/src/user/api_services/firestore_service.dart';
-import 'package:app_attend/src/user/widgets/color_constant.dart';
-import 'package:app_attend/src/user/widgets/status_widget.dart';
-import 'package:app_attend/src/user/widgets/time_clock.dart';
-import 'package:app_attend/src/user/widgets/time_controller.dart';
-import 'package:app_attend/src/user/widgets/upcoming_reminder.dart';
-import 'package:app_attend/src/user/widgets/user_profile.dart';
+import 'package:app_attend/src/widgets/color_constant.dart';
+import 'package:app_attend/src/widgets/status_widget.dart';
+import 'package:app_attend/src/widgets/time_clock.dart';
+import 'package:app_attend/src/widgets/time_controller.dart';
+import 'package:app_attend/src/widgets/upcoming_reminder.dart';
+import 'package:app_attend/src/widgets/user_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -74,14 +76,14 @@ class _HomeFinalState extends State<HomeFinal> {
   }
 
   void _updateDateTimeFromSelection(String selected) {
-    print('Selected item: $selected'); // Debug: Print the selected item
+    log('Selected item: $selected'); // Debug: Print the selected item
 
     // Split the selected string by spaces
     final parts = selected.split(' ');
 
     // Ensure there are enough parts to extract date and time
     if (parts.length < 2) {
-      print('Error: Selected string format does not match expected pattern');
+      log('Error: Selected string format does not match expected pattern');
       return;
     }
 
@@ -99,7 +101,7 @@ class _HomeFinalState extends State<HomeFinal> {
       time.value =
           DateFormat('hh:mm a').format(selectedDateTime); // Format time only
     } catch (e) {
-      print('Error parsing date and time: $e'); // Log parsing error
+      log('Error parsing date and time: $e'); // Log parsing error
     }
   }
 

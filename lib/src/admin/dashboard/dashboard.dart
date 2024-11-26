@@ -1,7 +1,9 @@
-import 'package:app_attend/src/admin/dashboard/screens/Student_page.dart';
-import 'package:app_attend/src/admin/dashboard/screens/home_page.dart';
-import 'package:app_attend/src/admin/dashboard/screens/subject1.dart';
-import 'package:app_attend/src/admin/dashboard/screens/teacher_page.dart';
+import 'package:app_attend/src/admin/dashboard/screens/homepage/home_page.dart';
+import 'package:app_attend/src/admin/dashboard/screens/sections/section_page.dart';
+import 'package:app_attend/src/admin/dashboard/screens/students/student_page.dart';
+import 'package:app_attend/src/admin/dashboard/screens/subjects/subject_page.dart';
+
+import 'package:app_attend/src/admin/dashboard/screens/teachers/teacher_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,14 +28,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
     switch (currentPage) {
       case 'Dashboard':
         return HomePage();
-      case 'Teacher':
+      case 'Teachers':
         return TeacherPage();
-      case 'StudentsList':
+      case 'Students':
         return StudentPage();
-       case 'Subjects':
-        return ManageSubjectsPage();
-      // case 'Profile':
-      //   return PersonalInfoPage();
+      case 'Sections':
+        return SectionPage();
+      case 'Subjects':
+        return SubjectPage();
       default:
         return Center(child: Text('Main Content Area'));
     }
@@ -70,7 +72,6 @@ class Sidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    bool isLightMode = false;
 
     return Material(
       color: Color(0xFF1E1E2C),
@@ -134,28 +135,28 @@ class Sidebar extends StatelessWidget {
                   ),
                   _buildMenuItem(
                     Icons.people,
-                    'Teacher\'s List',
-                    isSelected: currentPage == 'Teacher',
-                    onTap: () => onPageSelected('Teacher'),
+                    'Teachers',
+                    isSelected: currentPage == 'Teachers',
+                    onTap: () => onPageSelected('Teachers'),
                   ),
                   _buildMenuItem(
                     Icons.star_border,
-                    "Student's List",
-                    isSelected: currentPage == 'StudentsList',
-                    onTap: () => onPageSelected('StudentsList'),
+                    "Students",
+                    isSelected: currentPage == 'Students',
+                    onTap: () => onPageSelected('Students'),
                   ),
                   _buildMenuItem(
                     Icons.book,
-                    "Subjects",
+                    "Sections",
+                    isSelected: currentPage == 'Sections',
+                    onTap: () => onPageSelected('Sections'),
+                  ),
+                  _buildMenuItem(
+                    Icons.analytics,
+                    'Subjects',
                     isSelected: currentPage == 'Subjects',
                     onTap: () => onPageSelected('Subjects'),
                   ),
-                  // _buildMenuItem(
-                  //   Icons.analytics,
-                  //   'Profile',
-                  //   isSelected: currentPage == 'Profile',
-                  //   onTap: () => onPageSelected('Profile'),
-                  // ),
                 ],
               ),
 
