@@ -297,7 +297,6 @@ class FirestoreService extends GetxController {
         };
       }).toList();
       subjects.value = records;
-      
     } catch (e) {
       log("Error fetching sections and subjects: $e");
     }

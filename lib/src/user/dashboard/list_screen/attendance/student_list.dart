@@ -78,7 +78,7 @@ class _StudentListState extends State<StudentList> {
         elevation: 0.0,
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 30),
           Row(
@@ -99,7 +99,7 @@ class _StudentListState extends State<StudentList> {
               return DataTable(
                 columns: [
                   DataColumn(label: Text('No.')),
-                  DataColumn(label: Text('ID Number')),
+                  // DataColumn(label: Text('ID Number')),
                   DataColumn(label: Text('Name')),
                   DataColumn(label: Text('Action')),
                 ],
@@ -110,7 +110,7 @@ class _StudentListState extends State<StudentList> {
 
                   return DataRow(cells: [
                     DataCell(Text('$index')),
-                    DataCell(Text(student['idnumber'] ?? '')),
+                    // DataCell(Text(student['idnumber'] ?? '')),
                     DataCell(Text(student['fullname'] ?? '')),
                     DataCell(Checkbox(
                       value: attendanceStatus[student['id']],
